@@ -1,0 +1,51 @@
+.ProductSort {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+
+  label {
+    color: #426d78;
+    font-size: 13px;
+    font-weight: 900;
+    letter-spacing: 0;
+    white-space: nowrap;
+  }
+
+  select {
+    height: 34px;
+    min-width: 140px;
+    padding: 0 38px 0 13px;
+    color: #344453;
+    font: inherit;
+    font-size: 13px;
+    font-weight: 800;
+    text-align: center;
+    text-align-last: center;
+    border: 1px solid rgba(154, 188, 199, 0.44);
+    border-radius: 999px;
+    outline: 0;
+    background:
+      linear-gradient(45deg, transparent 50%, #5f7987 50%) right 17px center / 6px 6px no-repeat,
+      linear-gradient(135deg, rgba(255, 255, 255, 0.82), rgba(235, 248, 248, 0.64));
+    appearance: none;
+    cursor: pointer;
+    transition: border-color 0.16s ease, box-shadow 0.16s ease, background 0.16s ease;
+
+    &:focus {
+      border-color: rgba(75, 126, 148, 0.72);
+      box-shadow: 0 0 0 3px rgba(163, 214, 224, 0.24);
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .ProductSort {
+    align-items: flex-start;
+    width: 100%;
+
+    select {
+      width: 100%;
+    }
+  }
+}
