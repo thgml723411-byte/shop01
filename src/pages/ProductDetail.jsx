@@ -42,13 +42,19 @@ const flowerCompositionMap = {
     {name: '달 큐빅', note: '달 모양 큐빅 장식이 은은한 반짝임을 더합니다.'},
   ],
   7: [
-    {name: '거베라 (Gerbera)', note: ''},
-    {name: '메시지 작성면', note: '뒷면에는 선물 문구를 적을 수 있는 여백이 있습니다.'},
-  ],
-  8: [
     {name: '마트리카리아 (Matricaria)', note: ''},
     {name: '메시지 작성면', note: '뒷면에는 선물 문구를 적을 수 있는 여백이 있습니다.'},
   ],
+  8: [
+    {name: '거베라 (Gerbera)', note: ''},
+    {name: '메시지 작성면', note: '뒷면에는 선물 문구를 적을 수 있는 여백이 있습니다.'},
+  ],
+}
+
+// 메시지 카드 상품(꽃 구성에 pos/corner가 없는 앞면+뒷면 2항목 구성)의 사이즈·재질 스펙입니다.
+const messageCardSpecMap = {
+  7: { size: '10 x 15 cm', material: '고급 무광 아트지 250g', envelope: '미포함 (카드만 배송)' },
+  8: { size: '10 x 15 cm', material: '고급 무광 아트지 250g', envelope: '미포함 (카드만 배송)' },
 }
 
 // 상품별 포장 과정 이미지입니다. 해당 상품에만 노출됩니다.
@@ -167,6 +173,9 @@ const ProductDetail = () => {
   const packagingImages = packagingImagesMap[product.legacyId || product.id] || []
   const flowerItems = flowerCompositionMap[product.legacyId || product.id] || []
   const hasFlowerDiagram = flowerItems.length > 0 && flowerItems.every((item) => item.pos && CORNER_BOX[item.corner])
+  const isMessageCard = product.categoryValue === 'message-card'
+  const cardSpec = messageCardSpecMap[product.legacyId || product.id]
+  const [cardFrontItem, cardBackItem] = flowerItems
   const flowerDiagramItems = hasFlowerDiagram
     ? flowerItems.map((item) => {
         const box = CORNER_BOX[item.corner]
@@ -285,10 +294,45 @@ const ProductDetail = () => {
 
       <div className={styles.detailSection}>
         <div className={styles.sectionTitle}>
-          <p>FLOWER COMPOSITION</p>
-          <h3>꽃 구성</h3>
+          <p>{isMessageCard ? 'CARD DESIGN' : 'FLOWER COMPOSITION'}</p>
+          <h3>{isMessageCard ? '카드 구성' : '꽃 구성'}</h3>
         </div>
-        {hasFlowerDiagram ? (
+        {isMessageCard ? (
+          <>
+            <div className={styles.cardFrontBack}>
+              <div className={styles.cardPanel}>
+                <span className={styles.cardLabel}>FRONT · 앞면</span>
+                <div className={styles.cardPanelFront}>
+                  <img src={product.image} alt={product.name} />
+                </div>
+                {cardFrontItem?.name && <p className={styles.cardPanelCaption}>{cardFrontItem.name}</p>}
+              </div>
+              <div className={styles.cardPanel}>
+                <span className={styles.cardLabel}>BACK · 뒷면</span>
+                <div className={styles.cardPanelBack}>
+                  <p className={styles.cardPanelBackText}>마음을 담아<br />적어보세요</p>
+                </div>
+                {cardBackItem?.note && <p className={styles.cardPanelCaption}>{cardBackItem.note}</p>}
+              </div>
+            </div>
+            {cardSpec && (
+              <dl className={styles.cardSpecGrid}>
+                <div>
+                  <dt>사이즈</dt>
+                  <dd>{cardSpec.size}</dd>
+                </div>
+                <div>
+                  <dt>재질</dt>
+                  <dd>{cardSpec.material}</dd>
+                </div>
+                <div>
+                  <dt>봉투</dt>
+                  <dd>{cardSpec.envelope}</dd>
+                </div>
+              </dl>
+            )}
+          </>
+        ) : hasFlowerDiagram ? (
           <>
             <div className={styles.flowerDiagram}>
               <svg
