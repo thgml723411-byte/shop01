@@ -1,0 +1,23 @@
+﻿[
+  {
+    "id": 1,
+    "image": "/img/banner/banner01.jpeg",
+    "eyebrow": "BLUE FLAX FLORIST",
+    "title": "투명하게 피어나는 오늘의 꽃",
+    "description": "맑은 빛과 부드러운 결을 담은 계절 꽃을 만나보세요."
+  },
+  {
+    "id": 2,
+    "image": "/img/banner/banner02.jpeg",
+    "eyebrow": "NEW BLOOM",
+    "title": "은은한 꽃의 분위기",
+    "description": "차분한 공간에 어울리는 싱그러운 플라워 셀렉션."
+  },
+  {
+    "id": 3,
+    "image": "/img/banner/banner03.jpeg",
+    "eyebrow": "FLOWER DELIVERY",
+    "title": "선물처럼 도착하는 꽃",
+    "description": "소중한 순간을 오래 기억하게 해줄 꽃을 준비했어요."
+  }
+]

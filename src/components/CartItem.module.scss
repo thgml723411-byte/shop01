@@ -1,0 +1,170 @@
+﻿// 장바구니 상품 한 줄의 레이아웃
+// 그리드 컬럼 순서: [이미지] [상품정보] [수량조절] [상품금액] [삭제버튼]
+.CartItem {
+  display: grid;
+  grid-template-columns: 112px minmax(0, 1fr) 142px 132px 44px;
+  align-items: center;
+  gap: 18px;
+  min-height: 132px;
+  padding: 18px;
+  background: #ffffff;
+  border: 1px solid rgba(117, 165, 169, 0.28);
+  border-radius: 8px;
+  box-shadow: 0 14px 30px rgba(73, 113, 116, 0.08); // 카드 은은한 그림자
+
+  // 첫 번째 자식 = 상품 이미지 링크
+  > a:first-child {
+    display: block;
+    width: 112px;
+    height: 96px;
+    overflow: hidden;
+    border-radius: 7px;
+    background: #eef7f5;
+  }
+
+  img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.2s ease;
+  }
+
+  > a:first-child:hover img {
+    transform: scale(1.04);
+  }
+
+  > div {
+    min-width: 0; // 텍스트가 그리드 컬럼 밖으로 넘치지 않도록(ellipsis 등 대비)
+  }
+
+  // 두 번째 자식 = 카테고리 / 상품명 / 가격 영역
+  > div:nth-of-type(1) {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+
+    p {
+      margin: 0;
+      color: #6f8589;
+      font-size: 13px;
+      font-weight: 800;
+    }
+
+    a {
+      color: #071923;
+      font-size: 17px;
+      font-weight: 900;
+      line-height: 1.35;
+      text-decoration: none;
+      word-break: keep-all;
+
+      &:hover {
+        color: #267982;
+      }
+    }
+
+    strong {
+      color: #267982;
+      font-size: 15px;
+      font-weight: 900;
+    }
+  }
+
+  // 세 번째 자식 = 수량 조절 영역, 네 번째 자식 = 상품금액 영역
+  > div:nth-of-type(2),
+  > div:nth-of-type(3) {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+
+    span {
+      color: #7a8d91;
+      font-size: 12px;
+      font-weight: 900;
+    }
+  }
+
+  > div:nth-of-type(3) strong {
+    color: #071923;
+    font-size: 16px;
+    font-weight: 900;
+    white-space: nowrap;
+  }
+
+  // 삭제(X) 버튼
+  > button {
+    justify-self: end;
+    width: 24px;
+    height: 24px;
+    padding: 0;
+    color: #6f8589;
+    font-size: 18px;
+    font-weight: 900;
+    line-height: 1;
+    background: transparent;
+    border: 0;
+    cursor: pointer;
+    transition: color 0.18s ease, transform 0.18s ease;
+
+    &:hover {
+      color: #d84f62;
+      transform: scale(1.12);
+    }
+  }
+}
+
+// 태블릿 이하: 5칸 그리드를 3칸(이미지/정보/버튼)으로 재배치하고
+// 수량·금액 영역은 아래쪽에 가로로 배치
+@media (max-width: 860px) {
+  .CartItem {
+    grid-template-columns: 92px minmax(0, 1fr) 38px;
+    gap: 12px 14px;
+    padding: 16px;
+
+    > a:first-child {
+      grid-row: span 3;
+      width: 92px;
+      height: 86px;
+    }
+
+    > div:nth-of-type(1) {
+      grid-column: 2;
+    }
+
+    > div:nth-of-type(2),
+    > div:nth-of-type(3) {
+      grid-column: 2 / 4;
+      flex-direction: row;
+      justify-content: space-between;
+      align-items: center;
+      padding-top: 10px;
+      border-top: 1px solid rgba(117, 165, 169, 0.18);
+    }
+
+    > button {
+      grid-column: 3;
+      grid-row: 1;
+      align-self: start;
+      justify-self: end;
+    }
+  }
+}
+
+// 모바일: 이미지 크기와 여백을 한 번 더 축소
+@media (max-width: 520px) {
+  .CartItem {
+    grid-template-columns: 82px minmax(0, 1fr) 34px;
+    padding: 14px;
+
+    > a:first-child {
+      width: 82px;
+      height: 78px;
+    }
+
+    > div:nth-of-type(1) a {
+      font-size: 15px;
+    }
+  }
+}

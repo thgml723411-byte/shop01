@@ -1,0 +1,43 @@
+﻿.Home {
+  background: linear-gradient(90deg, #e6f8f5 0%, #eaf4fb 50%, #d8e5e4 100%);
+}
+
+.recommendSection {
+  max-width: 1450px;
+  margin: 0 auto;
+  padding: 46px 24px 96px;
+
+  h2 {
+    margin-bottom: 26px;
+    color: #071923;
+    font-size: 32px;
+    font-weight: 900;
+    line-height: 1.15;
+    letter-spacing: 0;
+
+    &::before {
+      display: block;
+      margin-bottom: 10px;
+      color: #426d78;
+      font-size: 13px;
+      font-weight: 900;
+      letter-spacing: 5px;
+      content: 'RECOMMENDED PICKS';
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .recommendSection {
+    padding: 34px 16px 72px;
+
+    h2 {
+      font-size: 26px;
+
+      &::before {
+        font-size: 11px;
+        letter-spacing: 3px;
+      }
+    }
+  }
+}

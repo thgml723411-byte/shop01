@@ -1,0 +1,115 @@
+﻿.NoticeDetail {
+  min-height: 100vh;
+  padding: 156px 24px 96px;
+  background: #f4f8f7;
+}
+
+.inner {
+  width: min(920px, 100%);
+  margin: 0 auto;
+}
+
+.detailHeader {
+  padding: 0 0 26px;
+  border-bottom: 2px solid #16383c;
+}
+
+.detailHeader p {
+  margin-bottom: 10px;
+  color: #267982;
+  font-size: 12px;
+  font-weight: 900;
+  letter-spacing: 2px;
+}
+
+.detailHeader h1 {
+  color: #071923;
+  font-size: 32px;
+  font-weight: 900;
+  line-height: 1.35;
+  letter-spacing: 0;
+  overflow-wrap: anywhere;
+}
+
+.detailHeader time {
+  display: block;
+  margin-top: 14px;
+  color: #637d80;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.content {
+  min-height: 300px;
+  padding: 34px 8px;
+  color: #183238;
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 1.9;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  border-bottom: 1px solid #b9ceca;
+}
+
+.actions {
+  display: flex;
+  justify-content: flex-end;
+  padding-top: 20px;
+}
+
+.actions a,
+.emptyState a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 88px;
+  height: 42px;
+  padding: 0 16px;
+  color: #fff;
+  font-size: 14px;
+  font-weight: 900;
+  background: #267982;
+  border-radius: 8px;
+}
+
+.stateMessage,
+.errorMessage,
+.emptyState {
+  padding: 60px 20px;
+  font-size: 14px;
+  font-weight: 800;
+  text-align: center;
+  background: #fff;
+  border-top: 2px solid #16383c;
+  border-bottom: 1px solid #b9ceca;
+}
+
+.stateMessage {
+  color: #51727a;
+}
+
+.errorMessage {
+  color: #b42318;
+}
+
+.emptyState {
+  display: grid;
+  justify-items: center;
+  gap: 20px;
+  color: #071923;
+}
+
+@media (max-width: 640px) {
+  .NoticeDetail {
+    padding: 132px 16px 72px;
+  }
+
+  .detailHeader h1 {
+    font-size: 27px;
+  }
+
+  .content {
+    padding: 26px 2px;
+    font-size: 15px;
+  }
+}

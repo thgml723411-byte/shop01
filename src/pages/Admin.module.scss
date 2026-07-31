@@ -1,0 +1,642 @@
+﻿.Admin {
+  min-height: 100vh;
+  padding: 148px 24px 96px;
+  background: linear-gradient(90deg, #e6f8f5 0%, #eaf4fb 50%, #d8e5e4 100%);
+}
+
+.inner {
+  display: grid;
+  grid-template-columns: 260px minmax(0, 1fr);
+  gap: 20px;
+  max-width: 1180px;
+  margin: 0 auto;
+}
+
+.sidebar,
+.contentArea {
+  background: rgba(255, 255, 255, 0.74);
+  border: 1px solid rgba(117, 165, 169, 0.24);
+  border-radius: 8px;
+  box-shadow: 0 18px 42px rgba(54, 86, 96, 0.12);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+}
+
+.sidebar {
+  align-self: start;
+  padding: 24px;
+}
+
+.sidebarTitle {
+  margin-bottom: 22px;
+}
+
+.sidebarTitle p,
+.contentHeader p {
+  margin-bottom: 8px;
+  color: #426d78;
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: 3px;
+}
+
+.sidebarTitle h2 {
+  color: #071923;
+  font-size: 26px;
+  font-weight: 900;
+  line-height: 1.2;
+  letter-spacing: 0;
+}
+
+.adminMenu {
+  display: grid;
+  gap: 8px;
+}
+
+.adminMenu a {
+  width: 100%;
+  min-height: 44px;
+  padding: 0 14px;
+  color: #071923;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 900;
+  text-align: left;
+  background: rgba(246, 252, 251, 0.78);
+  border: 1px solid rgba(117, 165, 169, 0.18);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.16s ease, color 0.16s ease, transform 0.16s ease;
+}
+
+.adminMenu a:hover,
+.adminMenu .active {
+  color: #fff;
+  background: #267982;
+  transform: translateY(-1px);
+}
+
+.contentArea {
+  min-height: 420px;
+  padding: 28px;
+}
+
+.contentHeader {
+  margin-bottom: 22px;
+}
+
+.contentHeader h3 {
+  color: #071923;
+  font-size: 30px;
+  font-weight: 900;
+  line-height: 1.2;
+  letter-spacing: 0;
+}
+
+.panelBox {
+  display: grid;
+  gap: 12px;
+  min-height: 240px;
+  align-content: start;
+  padding: 22px;
+  background: rgba(246, 252, 251, 0.78);
+  border: 1px solid rgba(117, 165, 169, 0.18);
+  border-radius: 8px;
+}
+
+.panelBox strong {
+  color: #071923;
+  font-size: 18px;
+  font-weight: 900;
+  line-height: 1.35;
+}
+
+.panelBox p {
+  color: #51727a;
+  font-size: 15px;
+  font-weight: 800;
+  line-height: 1.6;
+}
+
+.panelBox span {
+  margin-top: 8px;
+  color: #267982;
+  font-size: 14px;
+  font-weight: 900;
+  line-height: 1.5;
+}
+
+
+.stateMessage,
+.errorMessage {
+  font-size: 14px;
+  font-weight: 800;
+  line-height: 1.55;
+}
+
+.stateMessage {
+  color: #51727a;
+}
+
+.errorMessage {
+  color: #b42318;
+}
+
+.memberTableWrap {
+  overflow-x: auto;
+  background: rgba(246, 252, 251, 0.78);
+  border: 1px solid rgba(117, 165, 169, 0.18);
+  border-radius: 8px;
+}
+
+.memberTable {
+  width: 100%;
+  min-width: 640px;
+  border-collapse: collapse;
+}
+
+.memberTable th,
+.memberTable td {
+  padding: 15px 16px;
+  text-align: left;
+  border-bottom: 1px solid rgba(117, 165, 169, 0.16);
+}
+
+.memberTable th {
+  color: #426d78;
+  font-size: 12px;
+  font-weight: 900;
+  letter-spacing: 1px;
+}
+
+.memberTable td {
+  color: #071923;
+  font-size: 14px;
+  font-weight: 800;
+  line-height: 1.45;
+  overflow-wrap: anywhere;
+}
+
+.memberTable tr:last-child td {
+  border-bottom: 0;
+}
+
+.successMessage {
+  color: #267982;
+  font-size: 14px;
+  font-weight: 800;
+  line-height: 1.55;
+}
+
+.productForm {
+  display: grid;
+  scroll-margin-top: 140px;
+  gap: 16px;
+  margin-top: 18px;
+  padding: 20px;
+  background: rgba(246, 252, 251, 0.78);
+  border: 1px solid rgba(117, 165, 169, 0.18);
+  border-radius: 8px;
+}
+
+.formGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.formGrid label {
+  display: grid;
+  gap: 8px;
+}
+
+.formGrid span {
+  color: #071923;
+  font-size: 13px;
+  font-weight: 900;
+}
+
+.formGrid input,
+.formGrid textarea {
+  width: 100%;
+  padding: 0 13px;
+  color: #071923;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 700;
+  background: rgba(255, 255, 255, 0.86);
+  border: 1px solid rgba(117, 165, 169, 0.34);
+  border-radius: 8px;
+  outline: none;
+}
+
+.formGrid input {
+  height: 44px;
+}
+
+.formGrid textarea {
+  min-height: 104px;
+  padding-top: 12px;
+  resize: vertical;
+}
+
+.fullField {
+  grid-column: 1 / -1;
+}
+
+.checkField {
+  grid-column: 1 / -1;
+  display: flex !important;
+  align-items: center;
+  gap: 10px !important;
+}
+
+.checkField input {
+  width: 18px;
+  height: 18px;
+}
+
+.formActions,
+.itemActions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.itemActions {
+  justify-content: flex-end;
+}
+
+.formActions button,
+.itemActions button {
+  height: 38px;
+  padding: 0 14px;
+  color: #fff;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 900;
+  background: #267982;
+  border: 0;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.formActions button[type='button'],
+.itemActions button:last-child {
+  color: #b42318;
+  background: rgba(255, 255, 255, 0.86);
+  border: 1px solid rgba(180, 35, 24, 0.24);
+}
+
+.productAdminList {
+  display: grid;
+  gap: 12px;
+}
+
+.productAdminItem {
+  display: grid;
+  grid-template-columns: 80px minmax(0, 1fr) 96px auto;
+  gap: 14px;
+  align-items: center;
+  padding: 14px;
+  background: rgba(246, 252, 251, 0.78);
+  border: 1px solid rgba(117, 165, 169, 0.18);
+  border-radius: 8px;
+}
+
+.productAdminItem img {
+  width: 80px;
+  aspect-ratio: 1;
+  object-fit: cover;
+  border-radius: 8px;
+  background: #fff;
+}
+
+.productAdminItem div {
+  min-width: 0;
+}
+
+.productAdminItem strong {
+  display: block;
+  color: #071923;
+  font-size: 16px;
+  font-weight: 900;
+  line-height: 1.35;
+  overflow-wrap: anywhere;
+}
+
+.itemNotice {
+  display: inline-flex;
+  align-items: center;
+  height: 38px;
+  padding: 0 12px;
+  color: #51727a;
+  font-size: 13px;
+  font-weight: 900;
+  background: rgba(255, 255, 255, 0.86);
+  border: 1px solid rgba(117, 165, 169, 0.22);
+  border-radius: 8px;
+}
+
+.productAdminItem span,
+.productAdminItem p {
+  color: #51727a;
+  font-size: 13px;
+  font-weight: 800;
+  line-height: 1.5;
+}
+
+.stockEditArea {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.stockEditArea input {
+  width: 86px;
+  height: 38px;
+  padding: 0 10px;
+  color: #071923;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 900;
+  text-align: right;
+  background: rgba(255, 255, 255, 0.9);
+  border: 1px solid rgba(117, 165, 169, 0.34);
+  border-radius: 8px;
+  outline: none;
+}
+
+.stockBadge,
+.lowStockBadge,
+.soldOutBadge {
+  display: inline-flex;
+  align-items: center;
+  height: 28px;
+  margin-top: 8px;
+  padding: 0 10px;
+  font-size: 12px;
+  font-style: normal;
+  font-weight: 900;
+  border-radius: 999px;
+}
+
+.stockBadge {
+  color: #267982;
+  background: rgba(230, 248, 245, 0.94);
+  border: 1px solid rgba(38, 121, 130, 0.22);
+}
+
+.lowStockBadge {
+  color: #a15c00;
+  background: rgba(255, 245, 220, 0.95);
+  border: 1px solid rgba(191, 122, 12, 0.24);
+}
+
+.soldOutBadge {
+  color: #b42318;
+  background: rgba(255, 235, 232, 0.95);
+  border: 1px solid rgba(180, 35, 24, 0.22);
+}
+@media (max-width: 860px) {
+  .Admin {
+    padding: 132px 16px 74px;
+  }
+
+  .inner {
+    grid-template-columns: 1fr;
+  }
+
+  .adminMenu {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .productAdminItem {
+    grid-template-columns: 80px minmax(0, 1fr);
+  }
+
+  .stockEditArea,
+  .itemActions {
+    grid-column: 2;
+    justify-content: flex-start;
+  }
+}
+
+@media (max-width: 520px) {
+  .sidebar,
+  .contentArea {
+    padding: 20px 16px;
+  }
+
+  .adminMenu {
+    grid-template-columns: 1fr;
+  }
+
+  .contentHeader h3 {
+    font-size: 26px;
+  }
+}
+
+
+
+
+
+
+
+
+
+
+
+.noticeAdminList {
+  display: grid;
+  gap: 10px;
+}
+
+.noticeAdminItem {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 16px;
+  align-items: center;
+  padding: 16px;
+  background: rgba(246, 252, 251, 0.78);
+  border: 1px solid rgba(117, 165, 169, 0.18);
+  border-radius: 8px;
+}
+
+.noticeAdminInfo {
+  min-width: 0;
+}
+
+.noticeAdminInfo strong {
+  display: block;
+  color: #071923;
+  font-size: 15px;
+  font-weight: 900;
+  line-height: 1.45;
+  overflow-wrap: anywhere;
+}
+
+.noticeAdminInfo span {
+  display: block;
+  margin-top: 5px;
+  color: #51727a;
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1.5;
+}
+
+.noticeForm {
+  display: grid;
+  gap: 16px;
+  margin-top: 18px;
+  padding: 20px;
+  scroll-margin-top: 140px;
+  background: rgba(246, 252, 251, 0.78);
+  border: 1px solid rgba(117, 165, 169, 0.18);
+  border-radius: 8px;
+}
+
+.noticeForm label {
+  display: grid;
+  gap: 8px;
+}
+
+.noticeForm label > span {
+  color: #071923;
+  font-size: 13px;
+  font-weight: 900;
+}
+
+.noticeForm input,
+.noticeForm textarea {
+  width: 100%;
+  padding: 0 13px;
+  color: #071923;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1.6;
+  background: rgba(255, 255, 255, 0.86);
+  border: 1px solid rgba(117, 165, 169, 0.34);
+  border-radius: 8px;
+  outline: none;
+}
+
+.noticeForm input {
+  height: 44px;
+}
+
+.noticeForm textarea {
+  min-height: 220px;
+  padding-top: 12px;
+  resize: vertical;
+}
+
+.noticeForm input:focus,
+.noticeForm textarea:focus {
+  border-color: #267982;
+  box-shadow: 0 0 0 3px rgba(38, 121, 130, 0.1);
+}
+
+.formActions button:disabled,
+.itemActions button:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+
+@media (max-width: 640px) {
+  .noticeAdminItem {
+    grid-template-columns: 1fr;
+  }
+
+  .noticeAdminItem .itemActions {
+    justify-content: flex-start;
+  }
+}
+
+
+.recommendActions button {
+  min-height: 38px;
+  padding: 0 14px;
+  color: #fff;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 900;
+  background: #267982;
+  border: 0;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.recommendActions button:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+
+.recommendedSummary {
+  margin-bottom: 14px;
+  color: #267982;
+  font-size: 14px;
+  font-weight: 900;
+  line-height: 1.5;
+}
+
+.recommendStatusArea,
+.recommendActions {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.recommendedBadge,
+.normalBadge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 70px;
+  height: 30px;
+  padding: 0 10px;
+  font-size: 12px;
+  font-weight: 900;
+  border-radius: 999px;
+}
+
+.recommendedBadge {
+  color: #267982;
+  background: #e6f8f5;
+  border: 1px solid rgba(38, 121, 130, 0.24);
+}
+
+.normalBadge {
+  color: #637d80;
+  background: #fff;
+  border: 1px solid rgba(117, 165, 169, 0.24);
+}
+
+.recommendActions .recommendedButton {
+  color: #b42318;
+  background: #fff;
+  border: 1px solid rgba(180, 35, 24, 0.24);
+}
+
+.panelLink {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  justify-self: start;
+  min-height: 40px;
+  padding: 0 14px;
+  color: #fff;
+  font-size: 13px;
+  font-weight: 900;
+  background: #267982;
+  border-radius: 8px;
+}
+
+@media (max-width: 860px) {
+  .recommendStatusArea,
+  .recommendActions {
+    grid-column: 2;
+    justify-content: flex-start;
+  }
+}
+
+

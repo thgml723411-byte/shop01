@@ -1,0 +1,150 @@
+﻿.MainBanner {
+  position: relative;
+  min-height: 100vh;
+  overflow: hidden;
+  color: #10202a;
+  background: #eef8f8;
+}
+
+.MainBanner img {
+  width: 100%;
+  height: 100vh;
+  object-fit: cover;
+  object-position: center center;
+  opacity: 0.92;
+}
+
+.MainBanner::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(90deg, rgba(255, 255, 255, 0.74), rgba(255, 255, 255, 0.22) 48%, rgba(235, 247, 248, 0.52)),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.56));
+}
+
+.overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+}
+
+.TextBox {
+  position: absolute;
+  left: max(32px, calc((100vw - 1420px) / 2 + 32px));
+  top: 64%;
+  width: min(440px, calc(100% - 64px));
+  transform: translateY(-50%);
+}
+
+.TextBox p {
+  margin-bottom: 12px;
+  color: #5d7882;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 2.8px;
+  text-transform: uppercase;
+}
+
+.TextBox h2 {
+  margin: 0;
+  color: #101820;
+  font-size: 48px;
+  font-weight: 780;
+  line-height: 1.14;
+}
+
+.TextBox span {
+  display: block;
+  margin-top: 18px;
+  color: #526a75;
+  font-size: 17px;
+  line-height: 1.8;
+}
+
+.prevButton,
+.nextButton {
+  position: absolute;
+  top: 64%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 46px;
+  padding: 0;
+  color: #172631;
+  font-size: 36px;
+  font-weight: 300;
+  line-height: 1;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+  transform: translateY(-50%);
+  cursor: pointer;
+  transition: color 0.18s ease, transform 0.18s ease;
+}
+
+.prevButton {
+  left: 24px;
+}
+
+.nextButton {
+  right: 24px;
+}
+
+.prevButton:hover,
+.nextButton:hover {
+  color: #267982;
+  transform: translateY(-50%) scale(1.08);
+}
+
+.dots {
+  position: absolute;
+  left: 50%;
+  bottom: 42px;
+  display: flex;
+  gap: 8px;
+  transform: translateX(-50%);
+}
+
+.dots button {
+  width: 9px;
+  height: 9px;
+  border: 1px solid rgba(28, 49, 60, 0.48);
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.58);
+  cursor: pointer;
+}
+
+.dots .active {
+  width: 28px;
+  border-radius: 999px;
+  background: #172631;
+}
+
+@media (max-width: 760px) {
+  .MainBanner,
+  .MainBanner img {
+    min-height: 100vh;
+    height: 100vh;
+  }
+
+  .TextBox {
+    left: 22px;
+    width: calc(100% - 44px);
+  }
+
+  .TextBox h2 {
+    font-size: 34px;
+  }
+
+  .prevButton,
+  .nextButton {
+    display: none;
+  }
+
+  .dots {
+    left: 50%;
+    bottom: 22px;
+  }
+}

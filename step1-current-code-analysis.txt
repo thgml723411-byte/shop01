@@ -1,0 +1,271 @@
+1단계 현재 코드 분석
+
+분석 대상
+- React Vite 쇼핑몰 프로젝트: fireshopping01
+- 코드 수정 없음
+- React 컴포넌트 작성 방식과 SCSS Modules 구조는 유지 필요
+
+1. 현재 폴더 구조 분석
+
+fireshopping01/
+- public/
+  - data/
+    - products.json: 현재 상품 목록 원본 데이터
+    - categories.json: 카테고리 메뉴/필터 데이터
+    - banners.json: 메인 배너 데이터
+    - events.json, notices.json: 현재 빈 데이터 파일
+  - img/
+    - banner/, category/, empty/, flowers/, icons/, logo/, products/, profile/
+    - 화면에서 사용하는 정적 이미지
+- src/
+  - App.jsx: 전체 라우터 구조와 공통 Header/Footer 배치
+  - main.jsx: BrowserRouter로 App을 감싸는 Vite 진입점
+  - styles/
+    - reset.scss: 전역 리셋 스타일
+  - components/
+    - Header, Footer, MainBanner, CategoryMenu, ProductList, ProductCard 등 공통 UI 컴포넌트
+    - 각 컴포넌트는 대부분 같은 이름의 .module.scss를 import해서 사용
+  - pages/
+    - Home, Products, ProductDetail, SearchResult, Cart, Wishlist, Login, SignUp, Notice, NotFound 등 페이지 컴포넌트
+    - 각 페이지도 대부분 같은 이름의 .module.scss를 import해서 사용
+  - firebase/
+    - firebase.js, authApi.js, productApi.js, orderApi.js, storageApi.js, userApi.js, noticeApi.js
+    - 현재는 주석만 있는 준비 파일 상태
+  - store/
+    - authStore.js, cartStore.js, productStore.js, wishlistStore.js, orderStore.js, loadingStore.js
+    - 현재는 주석만 있는 준비 파일 상태
+  - hooks/
+    - useAuth, useProducts, useCart 등 훅 파일이 있으나 현재는 주석만 있는 준비 파일 상태
+  - constants/
+    - delivery.js 등 상수 파일
+  - utils/
+    - localStorage.js, priceFormat.js 등 유틸 파일
+- dist/
+  - 빌드 결과물. 직접 수정 대상 아님
+- package.json
+  - React, React Router, Firebase, Zustand, Sass 의존성 포함
+
+2. 상품 json을 불러오는 위치
+
+현재 상품 데이터는 Firebase가 아니라 public/data/products.json을 fetch로 불러온다.
+
+- src/pages/Home.jsx
+  - fetch('/data/products.json')
+  - 추천 상품 id [1, 3, 5, 7]만 필터링해서 ProductList에 전달
+- src/pages/Products.jsx
+  - fetch('/data/products.json')
+  - 전체 상품/카테고리 상품 목록, 가격 필터, 정렬 처리
+- src/pages/ProductDetail.jsx
+  - fetch('/data/products.json')
+  - URL의 /products/:id 값과 상품 id를 비교해서 상세 상품 표시
+- src/pages/SearchResult.jsx
+  - fetch('/data/products.json')
+  - 검색어와 상품명/카테고리를 비교해서 결과 표시
+
+관련 JSON 추가 로딩 위치
+- src/components/MainBanner.jsx
+  - fetch('/data/banners.json')
+- src/components/CategoryMenu.jsx
+  - fetch('/data/categories.json')
+- src/components/ProductFilter.jsx
+  - fetch('/data/categories.json')
+
+3. 로그인과 회원가입 페이지 불러오는 위치
+
+라우터 등록 위치
+- src/App.jsx
+  - /login -> src/pages/Login.jsx
+  - /signup -> src/pages/SignUp.jsx
+
+헤더 링크 위치
+- src/components/Header.jsx
+  - 로그인 링크: <Link to="/login">
+  - 회원가입 링크: <Link to="/signup">
+
+현재 페이지 상태
+- src/pages/Login.jsx
+  - Login.module.scss를 import하지만 화면 내부는 빈 div 상태
+- src/pages/SignUp.jsx
+  - SignUp.module.scss를 import하지만 화면 내부는 빈 div 상태
+
+4. 라우터 구조
+
+라우터 진입점
+- src/main.jsx
+  - BrowserRouter로 App을 감싼다.
+
+라우트 선언
+- src/App.jsx
+  - Header와 Footer는 모든 라우트에 공통으로 렌더링된다.
+  - Routes 내부에 페이지별 Route가 직접 선언되어 있다.
+
+현재 라우트 목록
+- / -> Home
+- /login -> Login
+- /signup -> SignUp
+- /wishlist -> Wishlist
+- /cart -> Cart
+- /notice -> Notice
+- /notice/:id -> NoticeDetail
+- /products -> Products
+- /products/:id -> ProductDetail
+- /products/category/:category -> Products
+- /search/:keyword -> SearchResult
+- * -> NotFound
+
+보호 라우트 준비 상태
+- src/components/ProtectedRoute.jsx
+  - Outlet만 반환하는 준비 상태
+- src/components/AdminRoute.jsx
+  - Outlet만 반환하는 준비 상태
+- App.jsx에는 아직 ProtectedRoute/AdminRoute가 적용되어 있지 않다.
+- Admin, MyPage, Order 관련 페이지 파일은 있으나 현재 라우터에는 연결되어 있지 않다.
+
+5. Zustand 사용 여부
+
+package.json에는 zustand 의존성이 설치되어 있다.
+- "zustand": "^5.0.14"
+
+하지만 현재 src 코드에서 zustand import 또는 create 사용은 확인되지 않았다.
+store 폴더의 파일들은 존재하지만 실제 스토어 구현은 아직 없다.
+- src/store/authStore.js
+- src/store/cartStore.js
+- src/store/productStore.js
+- src/store/wishlistStore.js
+- src/store/orderStore.js
+- src/store/loadingStore.js
+
+현재 상태 관리는 대부분 컴포넌트 내부 useState/useEffect와 localStorage 유틸로 처리한다.
+- 장바구니: localStorage의 cart
+- 찜 목록: localStorage의 wishlist
+
+6. Firebase를 연결할 때 수정할 파일
+
+기본 연결 파일
+- src/firebase/firebase.js
+  - Firebase app 초기화
+  - Auth, Firestore, Storage export 위치로 적합
+  - 환경변수는 실제 값을 작성하지 않고 Vite env 이름만 사용해야 함
+
+인증 기능
+- src/firebase/authApi.js
+  - 로그인, 회원가입, 로그아웃 API 함수 작성 위치
+- src/hooks/useAuth.js
+  - 로그인 상태 구독 또는 인증 관련 훅 작성 위치
+- src/store/authStore.js
+  - 사용자 상태, 관리자 여부, 로딩 상태 등을 Zustand로 관리할 경우 작성 위치
+- src/pages/Login.jsx
+  - 로그인 폼 및 authApi 호출 연결
+- src/pages/SignUp.jsx
+  - 회원가입 폼 및 authApi 호출 연결
+- src/components/Header.jsx
+  - 로그인/로그아웃/마이페이지/관리자 링크 표시 변경 시 수정
+- src/components/ProtectedRoute.jsx
+  - 로그인 사용자만 접근 가능한 라우트 처리
+- src/components/AdminRoute.jsx
+  - 관리자만 접근 가능한 라우트 처리
+- src/App.jsx
+  - 보호 라우트와 관리자 라우트 적용
+
+상품 기능
+- src/firebase/productApi.js
+  - Firestore 상품 조회/등록/수정/삭제 API 작성 위치
+- src/hooks/useProducts.js
+  - 상품 목록/상세 로딩 훅 작성 위치
+- src/store/productStore.js
+  - 상품 목록, 상세 상품, 로딩/에러 상태를 Zustand로 관리할 경우 작성 위치
+- src/pages/Home.jsx
+  - 추천 상품 로딩을 Firebase 기반으로 바꿀 때 수정
+- src/pages/Products.jsx
+  - 상품 목록, 카테고리, 필터, 정렬 데이터 소스 변경 시 수정
+- src/pages/ProductDetail.jsx
+  - 상세 상품 조회 데이터 소스 변경 시 수정
+- src/pages/SearchResult.jsx
+  - 검색 데이터 소스 변경 시 수정
+- src/pages/AdminProduct.jsx
+  - 관리자 상품 등록/수정/삭제 화면 구현 시 수정
+
+장바구니/찜/주문 기능
+- src/store/cartStore.js, src/hooks/useCart.js
+  - 현재 localStorage 기반 장바구니를 유지하거나 Zustand로 옮길 때 수정
+- src/store/wishlistStore.js, src/hooks/useWishlist.js
+  - 현재 localStorage 기반 찜 목록을 유지하거나 Firebase 사용자별 데이터로 옮길 때 수정
+- src/firebase/orderApi.js, src/hooks/useOrder.js, src/store/orderStore.js
+  - 주문 생성/조회 기능 작성 위치
+- src/pages/Cart.jsx
+  - 주문 페이지 연결 또는 사용자별 장바구니 연동 시 수정
+- src/pages/Order.jsx, src/pages/OrderComplete.jsx
+  - 주문 화면 구현 시 수정
+- src/pages/AdminOrder.jsx
+  - 관리자 주문 관리 화면 구현 시 수정
+
+공지/파일 업로드
+- src/firebase/noticeApi.js
+  - 공지 데이터 Firebase 연결 시 수정
+- src/firebase/storageApi.js
+  - 상품 이미지 등 Firebase Storage 업로드 기능 작성 위치
+
+Firebase 보안 규칙 필요 항목
+- Firestore rules
+  - products 읽기 허용, 관리자만 등록/수정/삭제
+  - users는 본인 문서만 읽기/수정, 관리자 필드 보호
+  - orders는 본인 주문 생성/조회, 관리자는 전체 조회/처리
+  - notices는 읽기 허용, 관리자만 작성/수정/삭제
+- Storage rules
+  - 상품 이미지 업로드/수정/삭제는 관리자만 허용
+  - 일반 공개 읽기 범위와 사용자 업로드 범위를 분리
+
+관리자 기능은 보안 규칙 없이 완료로 판단하면 안 된다.
+
+7. 기존 기능을 유지하면서 작업할 순서
+
+1. 현재 localStorage와 JSON 기반 기능을 기준 동작으로 유지한다.
+   - 상품 목록, 상세, 검색, 장바구니, 찜 기능이 깨지지 않게 한다.
+
+2. Firebase 설정 파일을 먼저 만든다.
+   - src/firebase/firebase.js
+   - 실제 환경변수 값은 작성하지 않고 import.meta.env.VITE_... 이름만 사용한다.
+
+3. 인증 기능을 작은 범위로 연결한다.
+   - src/firebase/authApi.js
+   - src/store/authStore.js 또는 src/hooks/useAuth.js
+   - src/pages/Login.jsx, src/pages/SignUp.jsx
+   - Header 표시 변경은 로그인 동작 확인 후 진행한다.
+
+4. 보호 라우트를 적용한다.
+   - ProtectedRoute는 로그인 사용자 확인
+   - AdminRoute는 관리자 권한 확인
+   - App.jsx에서 필요한 경로만 감싼다.
+
+5. Firebase 보안 규칙 초안을 먼저 기록하고 테스트 가능하게 준비한다.
+   - 관리자 기능 전에는 Firestore/Storage rules를 함께 정리한다.
+   - historyCode.txt에 수정된 보안 규칙 코드를 같이 기록한다.
+
+6. 상품 조회를 Firebase로 단계 전환한다.
+   - productApi/useProducts/productStore 중 기존 구조에 맞는 최소 파일만 사용
+   - Home, Products, ProductDetail, SearchResult의 fetch 위치를 한 번에 무리하게 바꾸지 않고 공통 API를 통해 단계적으로 교체한다.
+   - 기존 public/data/products.json은 초기 데이터 또는 fallback 자료로 남길 수 있다.
+
+7. 관리자 상품 기능을 구현한다.
+   - AdminProduct 페이지
+   - productApi 등록/수정/삭제
+   - 관리자만 접근 가능한 라우트
+   - 보안 규칙 테스트 시나리오 포함
+
+8. 주문 기능을 구현한다.
+   - Cart의 기존 계산 로직은 유지
+   - Order/OrderComplete 연결
+   - orderApi와 사용자별 orders 컬렉션 연결
+   - 관리자 주문 관리 전 보안 규칙 확인
+
+9. 마지막에 빌드/린트로 확인한다.
+   - npm run build
+   - npm run lint
+   - 오류가 있으면 수정 후 결과 보고
+
+유지해야 할 작성 방식
+- 기존처럼 함수형 컴포넌트 + export default 구조 유지
+- JSX 파일과 같은 이름의 .module.scss import 방식 유지
+- className={styles.Name} 패턴 유지
+- 기존 디자인 톤과 Header/Footer/상품 카드 레이아웃 유지
+- 필요한 파일만 수정하고 새 파일은 필요한 경우에만 생성

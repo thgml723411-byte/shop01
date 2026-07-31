@@ -1,0 +1,250 @@
+﻿rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isOwner(uid) {
+      return isSignedIn() && request.auth.uid == uid;
+    }
+
+    function isAdmin() {
+      return isSignedIn()
+        && exists(/databases/$(database)/documents/users/$(request.auth.uid))
+        && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
+    }
+
+    function isInitialAdminEmail() {
+      return isSignedIn() && request.auth.token.email == 'admin@a.com';
+    }
+
+    function hasOwner() {
+      return isSignedIn()
+        && (
+          resource.data.userId == request.auth.uid ||
+          resource.data.uid == request.auth.uid
+        );
+    }
+
+    function requestHasOwner() {
+      return isSignedIn()
+        && (
+          request.resource.data.userId == request.auth.uid ||
+          request.resource.data.uid == request.auth.uid
+        );
+    }
+
+    match /users/{uid} {
+      allow create: if isOwner(uid)
+        && request.resource.data.keys().hasOnly(['email', 'nickname', 'role', 'createAt'])
+        && request.resource.data.email == request.auth.token.email
+        && request.resource.data.nickname is string
+        && request.resource.data.nickname.size() > 0
+        && request.resource.data.role == 'user'
+        && request.resource.data.createAt == request.time;
+
+      allow get: if isOwner(uid) || isAdmin();
+      allow list: if isAdmin();
+
+      allow update: if isOwner(uid)
+        && request.resource.data.diff(resource.data).changedKeys().hasOnly(['nickname'])
+        && request.resource.data.nickname is string
+        && request.resource.data.nickname.size() > 0
+        && request.resource.data.email == resource.data.email
+        && request.resource.data.role == resource.data.role
+        && request.resource.data.createAt == resource.data.createAt;
+
+      allow delete: if false;
+
+      match /{document=**} {
+        allow read, write: if isOwner(uid);
+      }
+    }
+
+    match /orders/{orderId} {
+      allow create: if isSignedIn()
+        && request.resource.data.keys().hasOnly([
+          'userId', 'uid', 'email', 'items', 'subtotal', 'deliveryfree',
+          'totalPrice', 'createAt', 'status'
+        ])
+        && request.resource.data.userId == request.auth.uid
+        && request.resource.data.uid == request.auth.uid
+        && request.resource.data.email == request.auth.token.email
+        && request.resource.data.items is list
+        && request.resource.data.items.size() > 0
+        && request.resource.data.subtotal is number
+        && request.resource.data.deliveryfree is number
+        && request.resource.data.totalPrice is number
+        && request.resource.data.totalPrice >= request.resource.data.subtotal
+        && request.resource.data.createAt == request.time
+        && request.resource.data.status == 'ordered';
+
+      allow read: if hasOwner() || isAdmin();
+
+      allow update, delete: if false;
+    }
+
+    match /carts/{cartId} {
+      allow create: if isSignedIn()
+        && request.resource.data.keys().hasOnly([
+          'userId', 'uid', 'productId', 'productName', 'name', 'title',
+          'price', 'productPrice', 'discountPrice', 'quantity', 'image', 'category', 'createAt'
+        ])
+        && requestHasOwner()
+        && request.resource.data.quantity is number
+        && request.resource.data.quantity > 0;
+
+      allow read: if hasOwner() || isAdmin();
+
+      allow update: if hasOwner()
+        && request.resource.data.diff(resource.data).changedKeys().hasOnly([
+          'productId', 'productName', 'name', 'title', 'price', 'productPrice',
+          'discountPrice', 'quantity', 'image', 'category', 'createAt'
+        ])
+        && request.resource.data.userId == resource.data.userId
+        && request.resource.data.uid == resource.data.uid
+        && request.resource.data.quantity is number
+        && request.resource.data.quantity > 0;
+
+      allow delete: if hasOwner();
+    }
+
+    match /wishlists/{wishlistId} {
+      allow create: if isSignedIn()
+        && request.resource.data.keys().hasOnly([
+          'userId', 'uid', 'productId', 'productName', 'name', 'title',
+          'price', 'productPrice', 'discountPrice', 'image', 'productImage', 'category', 'createAt'
+        ])
+        && requestHasOwner();
+
+      allow read: if hasOwner() || isAdmin();
+
+      allow update: if hasOwner()
+        && request.resource.data.diff(resource.data).changedKeys().hasOnly([
+          'productId', 'productName', 'name', 'title', 'price', 'productPrice',
+          'discountPrice', 'image', 'productImage', 'category', 'createAt'
+        ])
+        && request.resource.data.userId == resource.data.userId
+        && request.resource.data.uid == resource.data.uid;
+
+      allow delete: if hasOwner();
+    }
+
+    match /notices/{noticeId} {
+      allow read: if true;
+
+      allow create: if isAdmin()
+        && request.resource.data.keys().hasOnly([
+          'title', 'content', 'authorUid', 'createAt', 'updatedAt'
+        ])
+        && request.resource.data.title is string
+        && request.resource.data.title.size() > 0
+        && request.resource.data.title.size() <= 120
+        && request.resource.data.content is string
+        && request.resource.data.content.size() > 0
+        && request.resource.data.authorUid == request.auth.uid
+        && request.resource.data.createAt == request.time
+        && request.resource.data.updatedAt == request.time;
+
+      allow update: if isAdmin()
+        && request.resource.data.keys().hasOnly([
+          'title', 'content', 'authorUid', 'createAt', 'updatedAt'
+        ])
+        && request.resource.data.diff(resource.data).changedKeys().hasOnly([
+          'title', 'content', 'updatedAt'
+        ])
+        && request.resource.data.title is string
+        && request.resource.data.title.size() > 0
+        && request.resource.data.title.size() <= 120
+        && request.resource.data.content is string
+        && request.resource.data.content.size() > 0
+        && request.resource.data.authorUid == resource.data.authorUid
+        && request.resource.data.createAt == resource.data.createAt
+        && request.resource.data.updatedAt == request.time;
+
+      allow delete: if isAdmin();
+    }
+    match /products/{productId} {
+      allow read: if true;
+
+      allow create: if isAdmin()
+        && request.resource.data.keys().hasOnly([
+          'legacyId', 'name', 'nameEn', 'category', 'categoryValue', 'price',
+          'discountRate', 'stock', 'image', 'description', 'isRecommended',
+          'createAt', 'updateAt'
+        ])
+        && request.resource.data.name is string
+        && request.resource.data.name.size() > 0
+        && request.resource.data.category is string
+        && request.resource.data.category.size() > 0
+        && request.resource.data.categoryValue is string
+        && request.resource.data.categoryValue.size() > 0
+        && request.resource.data.price is number
+        && request.resource.data.price >= 0
+        && request.resource.data.discountRate is number
+        && request.resource.data.discountRate >= 0
+        && request.resource.data.discountRate <= 100
+        && request.resource.data.stock is int
+        && request.resource.data.stock >= 0
+        && request.resource.data.image is string
+        && request.resource.data.image.size() > 0
+        && request.resource.data.isRecommended is bool
+        && request.resource.data.createAt == request.time
+        && request.resource.data.updateAt == request.time;
+
+      allow update: if (
+          isAdmin()
+          && request.resource.data.keys().hasOnly([
+            'legacyId', 'name', 'nameEn', 'category', 'categoryValue', 'price',
+            'discountRate', 'stock', 'image', 'description', 'isRecommended',
+            'createAt', 'updateAt'
+          ])
+          && request.resource.data.diff(resource.data).changedKeys().hasOnly([
+            'name', 'nameEn', 'category', 'categoryValue', 'price', 'discountRate',
+            'stock', 'image', 'description', 'isRecommended', 'updateAt'
+          ])
+          && request.resource.data.createAt == resource.data.createAt
+          && request.resource.data.name is string
+          && request.resource.data.name.size() > 0
+          && request.resource.data.category is string
+          && request.resource.data.category.size() > 0
+          && request.resource.data.categoryValue is string
+          && request.resource.data.categoryValue.size() > 0
+          && request.resource.data.price is number
+          && request.resource.data.price >= 0
+          && request.resource.data.discountRate is number
+          && request.resource.data.discountRate >= 0
+          && request.resource.data.discountRate <= 100
+          && request.resource.data.stock is int
+          && request.resource.data.stock >= 0
+          && request.resource.data.image is string
+          && request.resource.data.image.size() > 0
+          && request.resource.data.isRecommended is bool
+          && request.resource.data.updateAt == request.time
+        ) || (
+          // 기존 주문 완료 트랜잭션용 예외: 상품 정보는 바꿀 수 없고 재고 감소만 허용한다.
+          isSignedIn()
+          && request.resource.data.keys() == resource.data.keys()
+          && request.resource.data.diff(resource.data).changedKeys().hasOnly(['stock', 'updateAt'])
+          && request.resource.data.stock is int
+          && request.resource.data.stock >= 0
+          && request.resource.data.stock < resource.data.stock
+          && request.resource.data.updateAt == request.time
+        );
+
+      allow delete: if isAdmin();
+    }
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
+
+
+
+
+
+
+
+

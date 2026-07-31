@@ -1,0 +1,3391 @@
+2026-07-29 1단계 현재 코드 분석
+
+작업 내용
+- React Vite 쇼핑몰 프로젝트 fireshopping01의 현재 구조를 분석했다.
+- 기능 코드는 수정하지 않았다.
+- 분석 결과를 step1-current-code-analysis.txt 파일로 생성했다.
+
+수정/추가/생성 파일
+- step1-current-code-analysis.txt
+  - 이유: 사용자가 요청한 현재 폴더 구조, 상품 JSON 로딩 위치, 로그인/회원가입 페이지 위치, 라우터 구조, Zustand 사용 여부, Firebase 연결 시 수정 파일, 기존 기능 유지 작업 순서를 텍스트로 정리하기 위해 생성했다.
+- historyCode.txt
+  - 이유: 프로젝트 기본 작업 방식에 따라 단계별 작업 기록을 남기기 위해 생성했다.
+
+Firebase 보안 규칙 기록
+- 이번 단계는 코드 분석만 진행했으며 Firebase 기능 수정/추가/생성이 없었다.
+- 따라서 테스트용 Firestore/Storage 보안 규칙 코드는 아직 작성하지 않았다.
+- 이후 Firebase 기능 또는 관리자 기능 작업 시 보안 규칙 코드를 함께 기록해야 한다.
+
+2026-07-29 2단계 Firebase 기본 설정
+
+작업 내용
+- React Vite 프로젝트에서 Firebase 모듈 방식 초기 설정을 추가했다.
+- 환경변수는 실제 값을 작성하지 않고 import.meta.env의 VITE_ 접두사 변수만 사용했다.
+- 기존 화면, 라우터, 상품 JSON fetch 기능은 수정하지 않았다.
+- firebase 패키지는 package.json에 이미 설치되어 있어 추가 설치는 진행하지 않았다.
+
+수정/추가/생성 파일
+- src/firebase/firebase.js
+  - 이유: Firebase app 초기화와 Auth, Firestore, Storage 인스턴스를 공통으로 사용할 수 있도록 export하기 위해 수정했다.
+- .env.example
+  - 이유: 실제 값 없이 Firebase 연결에 필요한 Vite 환경변수 이름을 안내하기 위해 생성했다.
+- historyCode.txt
+  - 이유: 프로젝트 기본 작업 방식에 따라 2단계 작업 내용과 수정/생성 파일의 이유를 기록하기 위해 수정했다.
+
+Firebase 보안 규칙 기록
+- 이번 단계는 Firebase SDK 기본 연결 파일만 추가했으며 관리자 기능, 상품 등록/수정/삭제, 주문 기능은 구현하지 않았다.
+- 따라서 Firestore/Storage 보안 규칙 코드는 아직 변경하지 않았다.
+- 이후 Firebase 데이터 기능 또는 관리자 기능을 추가할 때 테스트 가능한 보안 규칙 코드를 함께 기록해야 한다.
+
+2026-07-29 3단계 회원가입과 로그인
+
+작업 내용
+- Firebase Authentication 이메일/비밀번호 방식으로 회원가입과 로그인을 연결했다.
+- 회원가입 성공 시 Firestore users 컬렉션에 uid를 문서 id로 사용자 정보를 저장하도록 했다.
+- users 문서에는 email, nickname, role, createAt을 저장한다.
+- role 기본값은 반드시 user로 저장되도록 authApi.js에 고정했다.
+- 로그인 성공 시 홈(/)으로 이동하도록 Login.jsx에 navigate('/')를 연결했다.
+- Firebase Auth 에러 메시지를 한글로 변환해서 화면에 표시하도록 했다.
+- Header에서 Firebase 로그인 상태를 구독하고 로그인/회원가입 링크 또는 닉네임/로그아웃 버튼을 표시하도록 했다.
+- 기존 상품 JSON fetch 기능과 상품 화면 파일은 수정하지 않았다.
+- firebase와 zustand 패키지는 이미 설치되어 있어 추가 설치는 진행하지 않았다.
+
+수정/추가/생성 파일
+- src/firebase/authApi.js
+  - 이유: Firebase Auth 회원가입, 로그인, 로그아웃 함수와 한글 에러 메시지 변환 함수를 작성하기 위해 수정했다.
+  - 회원가입 시 Firestore users/{uid} 문서에 email, nickname, role, createAt을 저장하도록 했다.
+- src/store/authStore.js
+  - 이유: Zustand로 Firebase 로그인 상태, 사용자 프로필, 로그아웃 액션을 Header와 페이지에서 함께 사용하기 위해 수정했다.
+- src/hooks/useAuth.js
+  - 이유: Firebase 인증 상태 구독을 재사용할 수 있는 훅 형태로 준비하기 위해 수정했다.
+- src/pages/Login.jsx
+  - 이유: 기존 빈 로그인 페이지에 이메일/비밀번호 로그인 폼, 한글 에러 메시지, 로그인 성공 후 홈 이동 기능을 연결하기 위해 수정했다.
+- src/pages/Login.module.scss
+  - 이유: 기존 SCSS Module 방식을 유지하면서 로그인 폼 화면 스타일을 추가하기 위해 수정했다.
+- src/pages/SignUp.jsx
+  - 이유: 기존 빈 회원가입 페이지에 닉네임/이메일/비밀번호 회원가입 폼과 users 문서 생성 흐름을 연결하기 위해 수정했다.
+- src/pages/SignUp.module.scss
+  - 이유: 기존 SCSS Module 방식을 유지하면서 회원가입 폼 화면 스타일을 추가하기 위해 수정했다.
+- src/components/Header.jsx
+  - 이유: 로그인 상태에 따라 로그인/회원가입 링크와 닉네임/로그아웃 버튼을 전환하기 위해 수정했다.
+- src/components/Header.module.scss
+  - 이유: 기존 Header 디자인을 유지하면서 닉네임 표시와 로그아웃 버튼 스타일을 링크 스타일과 맞추기 위해 수정했다.
+- historyCode.txt
+  - 이유: 프로젝트 기본 작업 방식에 따라 3단계 작업 내용, 수정 파일, 수정 이유, Firebase 보안 규칙 코드를 기록하기 위해 수정했다.
+
+Firebase 보안 규칙 기록
+- 이번 단계는 Firebase Authentication과 Firestore users 컬렉션 생성 기능을 추가했으므로 테스트 가능한 Firestore 보안 규칙 예시를 함께 기록한다.
+- 아래 규칙은 사용자가 본인 users 문서만 생성/조회/수정할 수 있고, 회원가입 시 role은 user로만 생성되도록 제한한다.
+- 관리자 기능은 아직 구현하지 않았으므로 admin 판정은 다음 관리자 단계에서 별도 보강해야 한다.
+
+Firestore rules 예시:
+
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isOwner(uid) {
+      return isSignedIn() && request.auth.uid == uid;
+    }
+
+    match /users/{uid} {
+      allow create: if isOwner(uid)
+        && request.resource.data.keys().hasOnly(['email', 'nickname', 'role', 'createAt'])
+        && request.resource.data.email == request.auth.token.email
+        && request.resource.data.nickname is string
+        && request.resource.data.nickname.size() > 0
+        && request.resource.data.role == 'user'
+        && request.resource.data.createAt == request.time;
+
+      allow read: if isOwner(uid);
+
+      allow update: if isOwner(uid)
+        && request.resource.data.diff(resource.data).changedKeys().hasOnly(['nickname'])
+        && request.resource.data.role == resource.data.role
+        && request.resource.data.email == resource.data.email;
+
+      allow delete: if false;
+    }
+  }
+}
+
+테스트 기준
+- 회원가입한 사용자는 users/{본인 uid} 문서를 role user로 생성할 수 있어야 한다.
+- 클라이언트에서 role을 admin 등 다른 값으로 생성하려 하면 거부되어야 한다.
+- 로그인한 사용자는 본인 users 문서만 읽을 수 있어야 한다.
+- 다른 사용자의 users 문서 읽기/수정/삭제는 거부되어야 한다.
+
+2026-07-29 3단계 오류 수정 - npm run dev 빈 화면
+
+오류 원인
+- .env 파일에 Firebase 실제 환경변수가 아직 없는 상태에서 앱 시작 시 Header가 authStore의 Firebase 인증 상태 구독을 실행했다.
+- 기존 firebase.js는 환경변수 값이 비어 있어도 Firebase app/auth/firestore를 바로 초기화했고, 인증 구독 과정에서 런타임 오류가 발생해 화면이 빈 화면으로 보일 수 있었다.
+
+수정 내용
+- Firebase 환경변수가 모두 있을 때만 Firebase app, auth, db, storage를 초기화하도록 수정했다.
+- Firebase 환경변수가 없으면 auth, db, storage를 null로 두고, 인증 기능만 한글 에러 메시지를 표시하도록 방어했다.
+- Header의 로그인 상태 구독이 Firebase 설정 누락 상태에서 앱 렌더링을 막지 않도록 authStore에 방어 로직을 추가했다.
+- 기존 화면, 상품 JSON fetch, 상품 목록/상세/검색/장바구니 기능은 수정하지 않았다.
+- 환경변수의 실제 값은 작성하지 않았다.
+
+수정/추가/생성 파일
+- src/firebase/firebase.js
+  - 이유: Firebase 환경변수 누락 시 앱 전체가 중단되지 않도록 isFirebaseConfigured 확인 후 초기화하도록 수정했다.
+- src/firebase/authApi.js
+  - 이유: Firebase 설정이 없을 때 회원가입/로그인/로그아웃에서 한글 안내 메시지를 반환하도록 수정했다.
+- src/store/authStore.js
+  - 이유: Firebase 설정이 없을 때 onAuthStateChanged를 실행하지 않고 비로그인 상태로 화면을 정상 렌더링하기 위해 수정했다.
+- historyCode.txt
+  - 이유: 오류 원인, 수정 내용, 수정 파일과 이유를 기록하기 위해 수정했다.
+
+Firebase 보안 규칙 기록
+- 이번 작업은 Firebase 설정 누락 시 런타임 오류를 막는 수정이며 Firestore 데이터 구조나 관리자 기능은 변경하지 않았다.
+- 3단계 회원가입/로그인에서 기록한 users 컬렉션 보안 규칙 예시는 그대로 적용 대상이다.
+
+2026-07-29 Firebase .env 형식 오류 수정
+
+오류 원인
+- .env 파일은 JavaScript 객체 문법이 아니므로 각 줄 끝에 쉼표를 쓰면 안 된다.
+- 현재 .env 값에 줄 끝 쉼표와 따옴표가 포함되어 Firebase 설정값이 잘못 읽힐 수 있었다.
+- 환경변수 실제 값은 기록하지 않았다.
+
+수정 내용
+- src/firebase/firebase.js에서 import.meta.env 값을 읽을 때 앞뒤 공백, 감싸는 따옴표, 마지막 쉼표를 제거하는 cleanEnvValue 함수를 추가했다.
+- 기존 화면과 상품 기능은 수정하지 않았다.
+- .env 실제 값은 수정하거나 기록하지 않았다.
+
+수정/추가/생성 파일
+- src/firebase/firebase.js
+  - 이유: .env 형식에 쉼표/따옴표가 섞여 있어도 Firebase 설정값을 안전하게 정리해서 초기화하기 위해 수정했다.
+- historyCode.txt
+  - 이유: 오류 원인과 수정 파일, 수정 이유를 기록하기 위해 수정했다.
+
+Firebase 보안 규칙 기록
+- 이번 작업은 환경변수 읽기 방식 보완이며 Firestore/Storage 데이터 권한 구조는 변경하지 않았다.
+- 3단계 회원가입/로그인에서 기록한 users 컬렉션 보안 규칙 예시는 그대로 적용 대상이다.
+
+2026-07-29 Firebase .env BOM 문자 오류 수정
+
+오류 원인
+- .env 첫 줄 VITE_FIREBASE_API_KEY 앞에 숨은 BOM 문자가 있어 Vite가 해당 키를 정상적으로 읽지 못했다.
+- Vite 기준으로 VITE_FIREBASE_API_KEY만 hasValue false였고, 이 때문에 isFirebaseConfigured가 false가 되어 로그인/회원가입 화면에 Firebase 환경변수 미설정 메시지가 표시되었다.
+- .env 값에는 줄 끝 쉼표와 감싸는 따옴표도 섞여 있어 함께 정리했다.
+- 환경변수 실제 값은 기록하지 않았다.
+
+수정 내용
+- .env 파일을 UTF-8 BOM 없음 형식으로 다시 저장했다.
+- VITE_FIREBASE_* 6개 키를 Vite가 읽을 수 있는 KEY=value 형식으로 정리했다.
+- 기존 화면과 상품 기능은 수정하지 않았다.
+
+수정/추가/생성 파일
+- .env
+  - 이유: 첫 줄 숨은 BOM 문자와 잘못된 쉼표/따옴표 형식을 제거해 Vite가 Firebase 환경변수를 읽을 수 있도록 수정했다.
+- historyCode.txt
+  - 이유: 오류 원인과 수정 파일, 수정 이유를 기록하기 위해 수정했다.
+
+Firebase 보안 규칙 기록
+- 이번 작업은 환경변수 파일 형식 수정이며 Firestore/Storage 보안 규칙은 변경하지 않았다.
+- 3단계 회원가입/로그인에서 기록한 users 컬렉션 보안 규칙 예시는 그대로 적용 대상이다.
+
+2026-07-29 4-1단계 마이페이지 기본 화면과 접근 권한
+
+작업 내용
+- /mypage 경로에서 로그인 사용자만 접근 가능한 마이페이지 기본 화면을 구현했다.
+- Firebase Authentication 로그인 상태를 Zustand authStore를 통해 확인하도록 ProtectedRoute를 연결했다.
+- 새로고침 시 인증 상태 확인이 끝나기 전에는 로그인 페이지로 이동하지 않고 '인증 상태를 확인중입니다.' 문구를 표시하도록 했다.
+- 인증 확인 후 로그인 상태가 아니면 /login으로 이동하도록 처리했다.
+- 마이페이지에는 회원 정보 영역, 회원 정보 수정 영역, 주문 내역 영역, 장바구니 영역, 찜한 상품 영역을 기본 화면으로 구성했다.
+- 각 영역의 실제 주문/장바구니/찜 데이터 연결은 아직 하지 않았다.
+- 기존 Header와 Routes 구조는 유지하면서 /mypage 보호 라우트만 추가했다.
+- 기존 SCSS Modules 방식과 디자인 톤을 유지했다.
+
+수정/추가/생성 파일
+- src/App.jsx
+  - 이유: /mypage 라우트를 추가하고 ProtectedRoute 하위 라우트로 연결하기 위해 수정했다.
+- src/components/ProtectedRoute.jsx
+  - 이유: Firebase Authentication 상태 확인 중 로딩 문구를 표시하고, 인증 확인 후 비로그인 사용자만 /login으로 이동시키기 위해 수정했다.
+- src/pages/MyPage.jsx
+  - 이유: 마이페이지 기본 화면과 5개 영역을 구성하기 위해 수정했다.
+- src/pages/MyPage.module.scss
+  - 이유: 기존 SCSS Modules 구조를 유지하면서 마이페이지 기본 화면 스타일을 추가하기 위해 수정했다.
+- src/components/Header.jsx
+  - 이유: 로그인 사용자가 Header의 닉네임을 통해 /mypage로 이동할 수 있도록 링크를 연결하기 위해 수정했다.
+- historyCode.txt
+  - 이유: 프로젝트 기본 작업 방식에 따라 작업 내용, 수정 파일, 수정 이유를 기록하기 위해 수정했다.
+
+Firebase 보안 규칙 기록
+- 이번 단계는 마이페이지 기본 화면과 클라이언트 접근 권한 처리만 구현했다.
+- Firestore 데이터 구조 추가, 관리자 기능, 주문/장바구니/찜 데이터 연결은 아직 하지 않았다.
+- 회원 정보 표시는 기존 users/{uid} 읽기 권한을 사용하므로 3단계에서 기록한 users 컬렉션 보안 규칙 예시를 그대로 적용 대상으로 본다.
+- 이번 단계에서 새로 추가할 Firestore/Storage 보안 규칙 코드는 없다.
+
+2026-07-29 4-2단계 마이페이지 회원정보 연결
+
+작업 내용
+- 마이페이지 회원 정보 영역을 Firestore users/{uid} 문서 조회와 연결했다.
+- 현재 로그인한 사용자의 uid(currentUser.uid)를 사용해 users/{uid} 문서를 조회한다.
+- 표시 항목을 닉네임, 이메일, 가입일로 변경했다.
+- createAt이 Firestore Timestamp인 경우 toDate()로 변환한 뒤 한국 날짜 형식으로 표시하도록 했다.
+- 회원정보 조회 중에는 '회원 정보를 불러오는 중입니다.' 문구를 표시한다.
+- 회원정보 조회 실패 시 한글 오류 메시지를 표시한다.
+- 회원 정보 수정 영역에서 자신의 닉네임과 비밀번호를 수정할 수 있도록 연결했다.
+- 닉네임 수정 성공 시 Firestore users/{uid}.nickname을 갱신하고 Header에 표시되는 userProfile도 함께 갱신한다.
+- 비밀번호 수정은 Firebase Authentication updatePassword를 사용한다.
+- 주문내역, 장바구니, 찜한 상품 영역은 실제 데이터 연결 없이 기존 기본 화면 그대로 유지했다.
+- 기존 src/firebase/userApi.js 파일을 재사용했고 userApi.jsx 새 파일은 생성하지 않았다.
+
+수정/추가/생성 파일
+- src/firebase/userApi.js
+  - 이유: users/{uid} 조회, 닉네임 수정, 비밀번호 수정 API와 한글 오류 메시지 처리를 작성하기 위해 수정했다.
+- src/pages/MyPage.jsx
+  - 이유: 회원 정보 영역을 Firestore 조회 결과와 연결하고, 닉네임/비밀번호 수정 폼을 구현하기 위해 수정했다.
+- src/pages/MyPage.module.scss
+  - 이유: 기존 SCSS Modules 구조를 유지하면서 회원 정보 로딩/오류/성공 메시지와 수정 폼 스타일을 추가하기 위해 수정했다.
+- src/store/authStore.js
+  - 이유: 닉네임 수정 후 Header 등 공통 로그인 사용자 정보 표시를 갱신할 수 있도록 setUserProfile 액션을 추가하기 위해 수정했다.
+- historyCode.txt
+  - 이유: 프로젝트 기본 작업 방식에 따라 작업 내용, 수정 파일, 수정 이유, Firebase 보안 규칙 코드를 기록하기 위해 수정했다.
+
+Firebase 보안 규칙 기록
+- 이번 단계는 users/{uid} 조회와 nickname 수정 기능을 사용하므로 테스트 가능한 Firestore 보안 규칙 예시를 함께 기록한다.
+- 비밀번호 수정은 Firebase Authentication 기능이며 Firestore 보안 규칙으로 제어하지 않는다.
+- 아래 규칙은 본인 users 문서만 읽을 수 있고, 본인 nickname만 수정할 수 있게 제한한다.
+
+Firestore rules 예시:
+
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isOwner(uid) {
+      return isSignedIn() && request.auth.uid == uid;
+    }
+
+    match /users/{uid} {
+      allow create: if isOwner(uid)
+        && request.resource.data.keys().hasOnly(['email', 'nickname', 'role', 'createAt'])
+        && request.resource.data.email == request.auth.token.email
+        && request.resource.data.nickname is string
+        && request.resource.data.nickname.size() > 0
+        && request.resource.data.role == 'user'
+        && request.resource.data.createAt == request.time;
+
+      allow read: if isOwner(uid);
+
+      allow update: if isOwner(uid)
+        && request.resource.data.diff(resource.data).changedKeys().hasOnly(['nickname'])
+        && request.resource.data.nickname is string
+        && request.resource.data.nickname.size() > 0
+        && request.resource.data.email == resource.data.email
+        && request.resource.data.role == resource.data.role
+        && request.resource.data.createAt == resource.data.createAt;
+
+      allow delete: if false;
+    }
+  }
+}
+
+테스트 기준
+- 로그인 사용자는 본인 users/{uid} 문서를 읽을 수 있어야 한다.
+- 로그인 사용자는 본인 users/{uid} 문서의 nickname만 수정할 수 있어야 한다.
+- email, role, createAt을 수정하려 하면 거부되어야 한다.
+- 다른 사용자의 users 문서 조회/수정은 거부되어야 한다.
+
+2026-07-29 4-3단계 users 문서가 없는 사용자 처리
+
+작업 내용
+- Firebase Authentication에는 사용자가 있지만 Firestore users/{uid} 문서가 없는 경우를 처리했다.
+- 마이페이지 회원 정보 조회 시 현재 로그인 사용자 객체의 uid를 사용해 users/{uid} 문서 존재 여부를 먼저 확인한다.
+- users/{uid} 문서가 이미 있으면 기존 문서를 그대로 반환하고 덮어쓰지 않는다.
+- users/{uid} 문서가 없을 때만 기본 회원 문서를 생성한다.
+- 기본 회원 문서의 role은 반드시 user로 저장한다.
+- 기본 가입일은 serverTimestamp()를 사용해 createAt에 저장한다.
+- 생성 후 users/{uid} 문서를 다시 조회해 마이페이지에 회원 정보를 표시하도록 했다.
+- 오류 메시지는 기존 userApi.js의 한글 오류 처리 흐름을 유지했다.
+
+수정/추가/생성 파일
+- src/firebase/userApi.js
+  - 이유: users/{uid} 문서 조회 시 문서가 없을 때만 기본 회원 문서를 생성하고, 생성 후 다시 조회해 반환하도록 수정했다.
+- src/pages/MyPage.jsx
+  - 이유: getUserProfile 함수가 현재 로그인 사용자 객체를 받아 누락 문서를 생성할 수 있도록 호출 인자를 uid에서 currentUser로 변경했다.
+- historyCode.txt
+  - 이유: 프로젝트 기본 작업 방식에 따라 작업 내용, 수정 파일, 수정 이유, Firebase 보안 규칙 코드를 기록하기 위해 수정했다.
+
+Firebase 보안 규칙 기록
+- 이번 단계는 users/{uid} 문서가 없는 로그인 사용자가 본인 기본 회원 문서를 생성할 수 있어야 한다.
+- 기존 문서가 있으면 클라이언트의 setDoc 덮어쓰기는 Firestore에서 update로 평가되므로, update 규칙이 nickname 변경만 허용하면 email/role/createAt 덮어쓰기를 막을 수 있다.
+- 아래 규칙은 본인 users 문서 생성 시 role user와 createAt request.time만 허용하고, 수정은 nickname만 허용한다.
+
+Firestore rules 예시:
+
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isOwner(uid) {
+      return isSignedIn() && request.auth.uid == uid;
+    }
+
+    match /users/{uid} {
+      allow create: if isOwner(uid)
+        && request.resource.data.keys().hasOnly(['email', 'nickname', 'role', 'createAt'])
+        && request.resource.data.email == request.auth.token.email
+        && request.resource.data.nickname is string
+        && request.resource.data.nickname.size() > 0
+        && request.resource.data.role == 'user'
+        && request.resource.data.createAt == request.time;
+
+      allow read: if isOwner(uid);
+
+      allow update: if isOwner(uid)
+        && request.resource.data.diff(resource.data).changedKeys().hasOnly(['nickname'])
+        && request.resource.data.nickname is string
+        && request.resource.data.nickname.size() > 0
+        && request.resource.data.email == resource.data.email
+        && request.resource.data.role == resource.data.role
+        && request.resource.data.createAt == resource.data.createAt;
+
+      allow delete: if false;
+    }
+  }
+}
+
+테스트 기준
+- Auth에는 있지만 users/{uid} 문서가 없는 로그인 사용자가 마이페이지에 접근하면 기본 users/{uid} 문서가 생성되어야 한다.
+- 생성된 문서의 role은 user여야 한다.
+- 생성된 문서의 createAt은 서버 시간이어야 한다.
+- users/{uid} 문서가 이미 있는 사용자는 기존 email, role, createAt 값이 덮어써지지 않아야 한다.
+- 로그인 사용자는 본인 nickname만 수정할 수 있어야 한다.
+
+2026-07-29 4-4단계 마이페이지 주문 내역 연결
+
+작업 내용
+- 마이페이지의 주문 내역 영역을 Firestore orders 컬렉션 조회와 연결했다.
+- 현재 로그인한 사용자의 uid를 사용해 orders 문서를 조회한다.
+- 주문 문서의 사용자 필드는 userId 또는 uid를 지원하도록 조회했다.
+- localStorage는 사용하지 않았다.
+- 주문 목록은 createAt, createdAt, orderDate 중 존재하는 날짜 값을 기준으로 최신 주문이 위에 오도록 정렬했다.
+- 주문 내역 표시 항목은 상품명, 주문일, 수량, 주문금액이다.
+- 주문금액은 쉼표와 원을 붙여 표시한다.
+- 주문이 없으면 '아직 주문 내역이 없습니다' 문구와 상품 목록으로 이동 링크를 표시한다.
+- 주문 조회 실패 시 주문 영역에만 한글 오류 메시지를 표시한다.
+- 주문 조회 상태와 회원 정보 조회 상태를 분리해 주문 조회 실패로 회원 정보가 사라지지 않도록 처리했다.
+- 회원 정보/회원 정보 수정/장바구니/찜한 상품 영역은 기능적으로 수정하지 않았다.
+- 기존 src/firebase/orderApi.js 파일을 재사용했다.
+
+수정/추가/생성 파일
+- src/firebase/orderApi.js
+  - 이유: 현재 로그인 사용자의 주문 문서를 Firestore orders 컬렉션에서 조회하고, 최신순 정렬 및 한글 오류 메시지 처리를 제공하기 위해 수정했다.
+- src/pages/MyPage.jsx
+  - 이유: 기존 주문 내역 영역만 Firestore 주문 목록 표시, 로딩, 오류, 빈 목록 UI와 연결하기 위해 수정했다.
+- src/pages/MyPage.module.scss
+  - 이유: 기존 SCSS Modules 구조를 유지하면서 주문 목록과 상품 목록 이동 링크 스타일을 추가하기 위해 수정했다.
+- historyCode.txt
+  - 이유: 프로젝트 기본 작업 방식에 따라 작업 내용, 수정 파일, 수정 이유, Firebase 보안 규칙 코드를 기록하기 위해 수정했다.
+
+Firebase 보안 규칙 기록
+- 이번 단계는 orders 컬렉션 조회 기능을 추가했으므로 테스트 가능한 Firestore 보안 규칙 예시를 함께 기록한다.
+- 사용자는 본인 주문만 읽을 수 있어야 한다.
+- 현재 조회 코드는 주문 문서의 userId 또는 uid가 request.auth.uid인 경우를 지원한다.
+- 주문 생성 기능은 아직 구현하지 않았으므로 create/update/delete 규칙은 다음 주문 생성 단계에서 실제 데이터 구조에 맞춰 보강해야 한다.
+
+Firestore rules 예시:
+
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isOwner(uid) {
+      return isSignedIn() && request.auth.uid == uid;
+    }
+
+    match /users/{uid} {
+      allow create: if isOwner(uid)
+        && request.resource.data.keys().hasOnly(['email', 'nickname', 'role', 'createAt'])
+        && request.resource.data.email == request.auth.token.email
+        && request.resource.data.nickname is string
+        && request.resource.data.nickname.size() > 0
+        && request.resource.data.role == 'user'
+        && request.resource.data.createAt == request.time;
+
+      allow read: if isOwner(uid);
+
+      allow update: if isOwner(uid)
+        && request.resource.data.diff(resource.data).changedKeys().hasOnly(['nickname'])
+        && request.resource.data.nickname is string
+        && request.resource.data.nickname.size() > 0
+        && request.resource.data.email == resource.data.email
+        && request.resource.data.role == resource.data.role
+        && request.resource.data.createAt == resource.data.createAt;
+
+      allow delete: if false;
+    }
+
+    match /orders/{orderId} {
+      allow read: if isSignedIn()
+        && (
+          resource.data.userId == request.auth.uid ||
+          resource.data.uid == request.auth.uid
+        );
+
+      allow create, update, delete: if false;
+    }
+  }
+}
+
+테스트 기준
+- 로그인 사용자는 본인 userId 또는 uid가 들어간 orders 문서만 읽을 수 있어야 한다.
+- 다른 사용자의 orders 문서는 읽을 수 없어야 한다.
+- 주문이 없으면 마이페이지 주문 영역에 '아직 주문 내역이 없습니다'가 표시되어야 한다.
+- 주문 조회 권한이 없거나 실패해도 회원 정보 영역은 유지되어야 한다.
+
+2026-07-29 장바구니 주문하기와 마이페이지 주문 내역 연동
+
+작업 내용
+- 장바구니 페이지의 주문하기 버튼을 Firestore orders 컬렉션 생성 기능과 연결했다.
+- 로그인 사용자만 주문할 수 있도록 현재 Firebase Authentication 사용자 상태를 확인한다.
+- 비로그인 상태에서 주문하기를 누르면 로그인 안내 후 /login으로 이동한다.
+- 주문 성공 시 orders 문서에 userId, uid, email, items, subtotal, deliveryfree, totalPrice, createAt, status를 저장한다.
+- createAt은 serverTimestamp()를 사용한다.
+- 주문 문서의 userId/uid와 items/totalPrice/createAt 구조는 마이페이지 주문 내역 조회 로직과 연결되도록 맞췄다.
+- 주문 성공 후 장바구니를 비우고 /mypage로 이동해 주문 내역에서 확인할 수 있게 했다.
+- 주문 처리 중에는 주문하기 버튼 문구를 '주문 처리중...'으로 표시하고 중복 클릭을 막았다.
+- 주문 실패 시 장바구니 주문 요약 영역 아래에 한글 오류 메시지를 표시한다.
+- 기존 장바구니 localStorage 기반 상품 보관/수량 변경/삭제 기능은 유지했다.
+
+수정/추가/생성 파일
+- src/firebase/orderApi.js
+  - 이유: Firestore orders 컬렉션에 장바구니 주문 문서를 생성하는 createCartOrder 함수를 추가하기 위해 수정했다.
+- src/pages/Cart.jsx
+  - 이유: 주문하기 버튼 클릭 시 로그인 확인, 주문 생성, 장바구니 비우기, 마이페이지 이동, 오류 표시를 처리하기 위해 수정했다.
+- src/components/OrderSummary.jsx
+  - 이유: 주문 처리 중 상태를 받아 버튼 비활성화와 '주문 처리중...' 문구를 표시하기 위해 수정했다.
+- src/pages/Cart.module.scss
+  - 이유: 주문 실패 한글 오류 메시지와 주문 요약 영역 배치 스타일을 추가하기 위해 수정했다.
+- historyCode.txt
+  - 이유: 프로젝트 기본 작업 방식에 따라 작업 내용, 수정 파일, 수정 이유, Firebase 보안 규칙 코드를 기록하기 위해 수정했다.
+
+Firebase 보안 규칙 기록
+- 이번 작업은 orders 컬렉션 생성 기능을 추가했으므로 테스트 가능한 Firestore 보안 규칙 예시를 함께 기록한다.
+- 사용자는 본인 uid로만 주문 문서를 생성할 수 있어야 한다.
+- createAt은 서버 시간이어야 한다.
+- status 기본값은 ordered만 허용한다.
+- 사용자는 본인 주문만 읽을 수 있어야 한다.
+- 주문 수정/삭제는 아직 구현하지 않았으므로 차단한다.
+
+Firestore rules 예시:
+
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isOwner(uid) {
+      return isSignedIn() && request.auth.uid == uid;
+    }
+
+    match /users/{uid} {
+      allow create: if isOwner(uid)
+        && request.resource.data.keys().hasOnly(['email', 'nickname', 'role', 'createAt'])
+        && request.resource.data.email == request.auth.token.email
+        && request.resource.data.nickname is string
+        && request.resource.data.nickname.size() > 0
+        && request.resource.data.role == 'user'
+        && request.resource.data.createAt == request.time;
+
+      allow read: if isOwner(uid);
+
+      allow update: if isOwner(uid)
+        && request.resource.data.diff(resource.data).changedKeys().hasOnly(['nickname'])
+        && request.resource.data.nickname is string
+        && request.resource.data.nickname.size() > 0
+        && request.resource.data.email == resource.data.email
+        && request.resource.data.role == resource.data.role
+        && request.resource.data.createAt == resource.data.createAt;
+
+      allow delete: if false;
+    }
+
+    match /orders/{orderId} {
+      allow create: if isSignedIn()
+        && request.resource.data.keys().hasOnly([
+          'userId', 'uid', 'email', 'items', 'subtotal', 'deliveryfree',
+          'totalPrice', 'createAt', 'status'
+        ])
+        && request.resource.data.userId == request.auth.uid
+        && request.resource.data.uid == request.auth.uid
+        && request.resource.data.email == request.auth.token.email
+        && request.resource.data.items is list
+        && request.resource.data.items.size() > 0
+        && request.resource.data.subtotal is number
+        && request.resource.data.deliveryfree is number
+        && request.resource.data.totalPrice is number
+        && request.resource.data.totalPrice >= request.resource.data.subtotal
+        && request.resource.data.createAt == request.time
+        && request.resource.data.status == 'ordered';
+
+      allow read: if isSignedIn()
+        && (
+          resource.data.userId == request.auth.uid ||
+          resource.data.uid == request.auth.uid
+        );
+
+      allow update, delete: if false;
+    }
+  }
+}
+
+테스트 기준
+- 로그인 사용자는 장바구니 주문하기로 orders 문서를 생성할 수 있어야 한다.
+- 생성된 주문은 마이페이지 주문 내역에 표시되어야 한다.
+- 비로그인 사용자는 orders 문서를 생성할 수 없어야 한다.
+- 다른 사용자의 주문은 읽을 수 없어야 한다.
+- 클라이언트가 userId/uid를 다른 사람 uid로 넣으면 주문 생성이 거부되어야 한다.
+
+2026-07-29 주문 권한 오류 원인 확인 및 보안 규칙 파일 생성
+
+오류 원인
+- 장바구니 주문하기에서 표시된 '주문을 처리할 권한이 없습니다.'는 Firebase permission-denied 오류를 한글로 변환한 메시지다.
+- 원인은 Firestore 보안 규칙에서 orders 문서 create가 허용되지 않았거나, 기록된 규칙 예시가 Firebase 콘솔/CLI에 실제 적용되지 않은 상태일 가능성이 높다.
+- 프로젝트 폴더에는 firestore.rules 파일이 없어 로컬에서 관리되는 실제 규칙 파일도 없었다.
+
+수정 내용
+- 현재 코드가 생성하는 orders 문서 구조에 맞는 firestore.rules 파일을 생성했다.
+- users/{uid} 규칙과 orders/{orderId} 생성/조회 규칙을 함께 포함했다.
+- 주문 생성은 로그인 사용자 본인의 userId/uid와 email만 허용한다.
+- 주문 생성 시 createAt은 request.time, status는 ordered만 허용한다.
+- 주문 조회는 본인 주문만 허용한다.
+
+수정/추가/생성 파일
+- firestore.rules
+  - 이유: 장바구니 주문 생성과 마이페이지 주문 조회가 Firestore 보안 규칙에서 허용되도록 프로젝트에 적용 가능한 규칙 파일을 생성하기 위해 추가했다.
+- historyCode.txt
+  - 이유: 오류 원인, 수정 내용, 생성 파일과 이유를 기록하기 위해 수정했다.
+
+주의 사항
+- firestore.rules 파일을 생성해도 Firebase 서버 규칙이 자동으로 바뀌지는 않는다.
+- Firebase 콘솔의 Firestore Database > Rules에 같은 규칙을 붙여넣고 게시하거나, Firebase CLI로 배포해야 실제 주문 권한 오류가 해결된다.
+
+2026-07-29 4-5단계 마이페이지 장바구니 연결
+
+작업 내용
+- 기존 마이페이지의 장바구니 영역을 Firestore carts 컬렉션 조회와 연결했다.
+- 현재 로그인한 사용자의 uid를 사용해 carts 문서를 조회한다.
+- 장바구니 문서의 사용자 필드는 userId 또는 uid를 지원하도록 조회했다.
+- localStorage는 사용하지 않았다.
+- 표시 항목은 상품명, 가격, 수량, 상품별 금액, 전체 합계 금액이다.
+- 상품별 금액은 가격 * 수량으로 계산한다.
+- 전체 장바구니 합계 금액을 표시한다.
+- 장바구니가 비어 있으면 안내 문구와 장바구니 페이지로 이동하는 링크를 표시한다.
+- 각 상품별 개별 삭제 기능을 추가했고, 삭제 전 confirm으로 확인한다.
+- 장바구니 조회/삭제 실패 시 장바구니 영역에만 한글 오류 메시지를 표시한다.
+- 회원 정보, 회원 정보 수정, 주문 내역, 찜한 상품 영역은 기능적으로 수정하지 않았다.
+- 기존 src/firebase/cartApi.js가 없어서 새로 생성했다.
+
+수정/추가/생성 파일
+- src/firebase/cartApi.js
+  - 이유: Firestore carts 컬렉션에서 현재 로그인 사용자의 장바구니 상품 조회와 개별 삭제 기능을 제공하기 위해 생성했다.
+- src/pages/MyPage.jsx
+  - 이유: 기존 마이페이지 장바구니 영역만 Firestore 조회 결과, 합계 계산, 개별 삭제 UI와 연결하기 위해 수정했다.
+- src/pages/MyPage.module.scss
+  - 이유: 기존 SCSS Modules 구조를 유지하면서 장바구니 목록, 삭제 버튼, 전체 합계 금액 스타일을 추가하기 위해 수정했다.
+- firestore.rules
+  - 이유: carts 컬렉션의 본인 장바구니 조회/삭제 권한을 테스트 가능하게 하기 위해 수정했다.
+- historyCode.txt
+  - 이유: 프로젝트 기본 작업 방식에 따라 작업 내용, 수정/생성 파일, 수정 이유, Firebase 보안 규칙 코드를 기록하기 위해 수정했다.
+
+Firebase 보안 규칙 기록
+- 이번 단계는 carts 컬렉션 조회와 삭제 기능을 추가했으므로 테스트 가능한 Firestore 보안 규칙을 함께 기록한다.
+- 사용자는 본인 userId 또는 uid가 들어간 carts 문서만 읽고 삭제할 수 있어야 한다.
+- 아래 규칙은 firestore.rules 파일에도 반영했다.
+
+Firestore rules carts 부분:
+
+match /carts/{cartId} {
+  allow read: if isSignedIn()
+    && (
+      resource.data.userId == request.auth.uid ||
+      resource.data.uid == request.auth.uid
+    );
+
+  allow create: if isSignedIn()
+    && request.resource.data.keys().hasOnly([
+      'userId', 'uid', 'productId', 'productName', 'name', 'title',
+      'price', 'productPrice', 'discountPrice', 'quantity', 'image', 'category', 'createAt'
+    ])
+    && (
+      request.resource.data.userId == request.auth.uid ||
+      request.resource.data.uid == request.auth.uid
+    )
+    && request.resource.data.quantity is number
+    && request.resource.data.quantity > 0;
+
+  allow update: if isSignedIn()
+    && (
+      resource.data.userId == request.auth.uid ||
+      resource.data.uid == request.auth.uid
+    )
+    && request.resource.data.diff(resource.data).changedKeys().hasOnly(['quantity'])
+    && request.resource.data.quantity is number
+    && request.resource.data.quantity > 0;
+
+  allow delete: if isSignedIn()
+    && (
+      resource.data.userId == request.auth.uid ||
+      resource.data.uid == request.auth.uid
+    );
+}
+
+테스트 기준
+- 로그인 사용자는 본인 carts 문서만 조회할 수 있어야 한다.
+- 로그인 사용자는 본인 carts 문서만 삭제할 수 있어야 한다.
+- 다른 사용자의 carts 문서는 조회/삭제할 수 없어야 한다.
+- 장바구니 조회 실패 시 회원 정보나 주문 내역은 사라지지 않고 장바구니 영역에만 오류가 표시되어야 한다.
+
+2026-07-29 4-6단계 마이페이지 찜한 상품 연결
+
+작업 내용
+- 기존 마이페이지의 찜한 상품 영역을 Firestore wishlists 컬렉션 조회와 연결했다.
+- 현재 로그인한 사용자의 uid를 사용해 wishlists 문서를 조회한다.
+- 찜 문서의 사용자 필드는 userId 또는 uid를 지원하도록 조회했다.
+- localStorage는 사용하지 않았다.
+- 표시 항목은 상품 이미지, 상품명, 가격이다.
+- 찜한 상품이 없으면 안내 문구와 상품 목록으로 이동 링크를 표시한다.
+- 각 상품별 개별 삭제 기능을 추가했고, 삭제 전 confirm으로 확인한다.
+- 찜 목록 조회/삭제 실패 시 찜 영역에만 한글 오류 메시지를 표시한다.
+- 회원 정보, 주문 내역, 장바구니 영역은 계속 별도 상태로 표시되도록 유지했다.
+- 기존 src/firebase/wishlistApi.js가 없어서 새로 생성했다.
+- 기존 디자인과 SCSS Modules 구조를 유지했다.
+
+수정/추가/생성 파일
+- src/firebase/wishlistApi.js
+  - 이유: Firestore wishlists 컬렉션에서 현재 로그인 사용자의 찜한 상품 조회와 개별 삭제 기능을 제공하기 위해 생성했다.
+- src/pages/MyPage.jsx
+  - 이유: 기존 마이페이지 찜한 상품 영역만 Firestore 조회 결과, 빈 목록, 오류, 개별 삭제 UI와 연결하기 위해 수정했다.
+- src/pages/MyPage.module.scss
+  - 이유: 기존 SCSS Modules 구조를 유지하면서 찜한 상품 이미지 목록과 삭제 버튼 스타일을 추가하기 위해 수정했다.
+- firestore.rules
+  - 이유: wishlists 컬렉션의 본인 찜 목록 조회/삭제 권한을 테스트 가능하게 하기 위해 수정했다.
+- historyCode.txt
+  - 이유: 프로젝트 기본 작업 방식에 따라 작업 내용, 수정/생성 파일, 수정 이유, Firebase 보안 규칙 코드를 기록하기 위해 수정했다.
+
+Firebase 보안 규칙 기록
+- 이번 단계는 wishlists 컬렉션 조회와 삭제 기능을 추가했으므로 테스트 가능한 Firestore 보안 규칙을 함께 기록한다.
+- 사용자는 본인 userId 또는 uid가 들어간 wishlists 문서만 읽고 삭제할 수 있어야 한다.
+- 아래 규칙은 firestore.rules 파일에도 반영했다.
+
+Firestore rules wishlists 부분:
+
+match /wishlists/{wishlistId} {
+  allow read: if isSignedIn()
+    && (
+      resource.data.userId == request.auth.uid ||
+      resource.data.uid == request.auth.uid
+    );
+
+  allow create: if isSignedIn()
+    && request.resource.data.keys().hasOnly([
+      'userId', 'uid', 'productId', 'productName', 'name', 'title',
+      'price', 'productPrice', 'discountPrice', 'image', 'productImage', 'category', 'createAt'
+    ])
+    && (
+      request.resource.data.userId == request.auth.uid ||
+      request.resource.data.uid == request.auth.uid
+    );
+
+  allow update: if false;
+
+  allow delete: if isSignedIn()
+    && (
+      resource.data.userId == request.auth.uid ||
+      resource.data.uid == request.auth.uid
+    );
+}
+
+테스트 기준
+- 로그인 사용자는 본인 wishlists 문서만 조회할 수 있어야 한다.
+- 로그인 사용자는 본인 wishlists 문서만 삭제할 수 있어야 한다.
+- 다른 사용자의 wishlists 문서는 조회/삭제할 수 없어야 한다.
+- 찜 목록 조회 실패 시 회원 정보, 주문 내역, 장바구니는 사라지지 않고 찜 영역에만 오류가 표시되어야 한다.
+
+2026-07-29 마이페이지 장바구니/찜 비어 보이는 오류 수정
+
+오류 원인
+- 상품 카드와 상품 상세 페이지의 장바구니 담기/찜하기 기능은 기존 localStorage에만 저장하고 있었다.
+- 마이페이지 장바구니 영역은 Firestore carts 컬렉션을 조회하고, 마이페이지 찜한 상품 영역은 Firestore wishlists 컬렉션을 조회하도록 구현되어 있었다.
+- 따라서 상품을 담거나 찜해도 Firestore에는 데이터가 없어 마이페이지에서는 비어 있다고 표시되었다.
+
+수정 내용
+- 로그인 상태에서 상품 카드의 장바구니 담기 버튼을 누르면 Firestore carts 컬렉션에도 저장되도록 연결했다.
+- 로그인 상태에서 상품 상세 페이지의 장바구니 담기 버튼을 누르면 Firestore carts 컬렉션에도 저장되도록 연결했다.
+- 같은 상품을 다시 담으면 Firestore carts 문서의 quantity가 증가하도록 처리했다.
+- 로그인 상태에서 상품 카드/상세의 찜하기를 누르면 Firestore wishlists 컬렉션에 추가/삭제되도록 연결했다.
+- 기존 장바구니 페이지와 기존 찜 페이지 동작을 위해 localStorage 저장 흐름은 유지했다.
+- 기존 화면 디자인과 SCSS Modules 구조는 수정하지 않았다.
+
+수정/추가/생성 파일
+- src/firebase/cartApi.js
+  - 이유: 상품 담기 시 Firestore carts 컬렉션에 현재 로그인 사용자의 장바구니 문서를 생성하거나 수량을 증가시키는 addUserCartItem 함수를 추가하기 위해 수정했다.
+- src/firebase/wishlistApi.js
+  - 이유: 상품 찜하기/찜 해제 시 Firestore wishlists 컬렉션에 추가하거나 상품 id 기준으로 삭제하는 함수를 추가하기 위해 수정했다.
+- src/components/ProductCard.jsx
+  - 이유: 상품 카드의 장바구니 담기/찜하기 동작을 Firestore carts/wishlists 저장과 연결하기 위해 수정했다.
+- src/pages/ProductDetail.jsx
+  - 이유: 상품 상세 페이지의 장바구니 담기/찜하기 동작을 Firestore carts/wishlists 저장과 연결하기 위해 수정했다.
+- historyCode.txt
+  - 이유: 오류 원인, 수정 내용, 수정 파일과 이유를 기록하기 위해 수정했다.
+
+Firebase 보안 규칙 기록
+- 이번 수정은 기존 carts/wishlists 컬렉션의 create/read/update/delete 규칙 범위 안에서 동작한다.
+- firestore.rules에는 이미 carts create/update/read/delete, wishlists create/read/delete 규칙이 포함되어 있다.
+- Firebase 콘솔 Rules에 firestore.rules 내용을 게시해야 실제 권한이 적용된다.
+
+2026-07-29 비로그인 마이페이지 접근 제한 및 Header 마이페이지 표시 확인
+
+작업 내용
+- /mypage 경로는 기존 App.jsx에서 ProtectedRoute 하위에 있어 비로그인 사용자가 직접 접근하면 /login으로 이동하도록 유지되어 있음을 확인했다.
+- ProtectedRoute는 인증 상태 확인 중 '인증 상태를 확인중입니다.'를 표시하고, 확인 전에는 로그인 페이지로 이동하지 않도록 되어 있음을 확인했다.
+- Header에서 로그인 사용자에게 마이페이지 링크가 명확히 보이도록 수정했다.
+- 기존에는 닉네임 링크가 /mypage로 연결되어 있었으나, 사용자가 알아보기 쉽도록 닉네임은 텍스트로 표시하고 별도 '마이페이지' 링크를 추가했다.
+- 기존 Header 구조와 SCSS Modules 스타일은 유지했다.
+
+수정/추가/생성 파일
+- src/components/Header.jsx
+  - 이유: 로그인 사용자에게 Header에서 마이페이지 메뉴가 명확히 표시되도록 수정했다.
+- historyCode.txt
+  - 이유: 작업 내용과 수정 파일, 수정 이유를 기록하기 위해 수정했다.
+
+Firebase 보안 규칙 기록
+- 이번 작업은 클라이언트 라우터 접근 제한과 Header 표시 수정이며 Firestore/Storage 데이터 권한 구조는 변경하지 않았다.
+- 새로 추가할 보안 규칙 코드는 없다.
+
+[2026-07-29] 마이페이지 장바구니 표시 수정 및 주문 내역 링크 추가
+
+1. 원인 분석
+- 찜한 상품은 Firestore wishlists 컬렉션에 정상 저장되고 마이페이지도 같은 컬렉션을 조회하고 있었다.
+- 장바구니는 carts 컬렉션에 저장되도록 연결되어 있지만, 같은 상품을 다시 담거나 setDoc merge 시 상품 필드가 함께 전달되는 경우 기존 firestore.rules의 carts update 규칙이 quantity 변경만 허용해서 저장이 거절될 수 있었다.
+- 마이페이지 장바구니는 localStorage가 아니라 Firestore carts 컬렉션만 조회하므로, Firestore 저장이 거절되면 '장바구니가 비어 있습니다'로 표시된다.
+
+2. 수정 파일 및 이유
+- src/firebase/cartApi.js
+  - 사용하지 않는 updateDoc import를 제거했다.
+  - 장바구니 담기는 기존처럼 로그인 사용자의 uid와 상품 id를 이용해 carts/{uid}_{productId} 문서에 저장하도록 유지했다.
+- firestore.rules
+  - carts update 규칙을 현재 장바구니 저장 데이터 구조에 맞게 보정했다.
+  - 소유자 userId, uid 변경은 막고, 상품 정보와 수량 필드 병합 업데이트만 허용했다.
+- src/pages/MyPage.jsx
+  - 주문 내역이 있는 경우에도 '상품 목록으로 이동' 링크가 보이도록 추가했다.
+  - 기존 SCSS Module className(panelLink)을 재사용해 디자인 구조를 유지했다.
+
+3. Firebase 보안 규칙 코드
+```rules
+match /carts/{cartId} {
+  allow read: if hasOwner();
+
+  allow create: if isSignedIn()
+    && request.resource.data.keys().hasOnly([
+      'userId', 'uid', 'productId', 'productName', 'name', 'title',
+      'price', 'productPrice', 'discountPrice', 'quantity', 'image', 'category', 'createAt'
+    ])
+    && (
+      request.resource.data.userId == request.auth.uid ||
+      request.resource.data.uid == request.auth.uid
+    )
+    && request.resource.data.quantity is number
+    && request.resource.data.quantity > 0;
+
+  allow update: if hasOwner()
+    && request.resource.data.diff(resource.data).changedKeys().hasOnly([
+      'productId', 'productName', 'name', 'title', 'price', 'productPrice',
+      'discountPrice', 'quantity', 'image', 'category', 'createAt'
+    ])
+    && request.resource.data.userId == resource.data.userId
+    && request.resource.data.uid == resource.data.uid
+    && request.resource.data.quantity is number
+    && request.resource.data.quantity > 0;
+
+  allow delete: if hasOwner();
+}
+```
+
+4. 테스트 예정
+- npm.cmd run build 실행 예정.
+
+5. 빌드 검사 결과
+- 일반 샌드박스 실행: Vite 내부 프로세스 실행이 spawn EPERM으로 차단됨.
+- 권한 승인 후 npm.cmd run build: 성공.
+- 참고: 번들 크기 500 kB 초과 경고가 표시되었지만 빌드는 완료됨.
+
+[2026-07-29] 마이페이지 주문 내역/장바구니 상품 이미지 표시 추가
+
+1. 수정 내용
+- 주문 내역 영역에 주문 상품의 대표 이미지를 표시했다.
+- 장바구니 영역에 장바구니 상품의 대표 이미지를 표시했다.
+- 찜한 상품 영역과 동일하게 76px 정사각형 이미지 스타일을 적용하고, 모바일에서는 60px로 줄어들도록 맞췄다.
+
+2. 수정 파일 및 이유
+- src/pages/MyPage.jsx
+  - 주문 내역은 첫 번째 주문 상품의 image/productImage를 대표 이미지로 사용하도록 getOrderImage 함수를 추가했다.
+  - 장바구니는 item.image/productImage를 사용하도록 getCartImage 함수를 추가했다.
+  - 기존 회원 정보, 주문 조회, 장바구니 조회, 찜 조회 로직은 유지했다.
+- src/pages/MyPage.module.scss
+  - orderItem, cartMiniItem에 이미지 칼럼과 이미지 스타일을 추가했다.
+  - 기존 SCSS Modules 구조와 찜한 상품 스타일 톤을 유지했다.
+
+3. Firebase 보안 규칙
+- 이번 작업은 Firestore 데이터 읽기/쓰기 구조 변경 없이 기존 image/productImage 필드를 화면에 표시하는 작업이므로 보안 규칙 수정 없음.
+
+4. 테스트 예정
+- npm.cmd run build 실행 예정.
+
+5. 빌드 검사 결과
+- 일반 샌드박스 실행: Vite 내부 프로세스 실행이 spawn EPERM으로 차단됨.
+- 권한 승인 후 npm.cmd run build: 성공.
+- 참고: 번들 크기 500 kB 초과 경고가 표시되었지만 빌드는 완료됨.
+
+[2026-07-29] 4-7단계 마이페이지 최종 점검 및 보안 규칙 정리
+
+1. 수정 파일 및 이유
+- src/firebase/cartApi.js
+  - 장바구니 조회, 추가, 수량 수정, 개별 삭제, 전체 삭제를 Firestore 기준으로 정리했다.
+- src/pages/Cart.jsx
+  - localStorage 장바구니 사용을 제거하고 로그인 사용자의 Firestore carts 컬렉션을 조회하도록 수정했다.
+  - 주문 완료 후 Firestore 장바구니를 비우도록 수정했다.
+- src/components/CartItem.jsx
+  - Firestore 문서 id와 실제 상품 id를 구분해 상품 상세 링크, 수량 변경, 삭제가 정확히 동작하도록 수정했다.
+- src/components/ProductCard.jsx
+  - localStorage 찜/장바구니 저장을 제거하고 Firestore carts/wishlists만 사용하도록 수정했다.
+  - Firestore 문서 id와 productId가 섞이지 않도록 상품 값을 정규화했다.
+- src/pages/ProductDetail.jsx
+  - 상세 페이지의 localStorage 찜/장바구니 저장 코드를 제거하고 Firestore API만 사용하도록 수정했다.
+- src/pages/Wishlist.jsx
+  - localStorage 찜 목록 사용을 제거하고 로그인 사용자의 Firestore wishlists 컬렉션을 조회/삭제하도록 수정했다.
+- src/firebase/orderApi.js
+  - Firestore 장바구니 문서 id가 주문 상품 id로 저장되지 않도록 productId 기준으로 주문 아이템을 정리했다.
+- firestore.rules
+  - 로그인한 본인만 users 문서 및 소유자 필드가 일치하는 orders/carts/wishlists 문서를 읽고 쓸 수 있도록 정리했다.
+  - carts, wishlists에 create/read/update/delete 권한을 명시했다.
+- src/utils/localStorage.js
+  - 더 이상 사용하는 파일이 없어 삭제했다.
+
+2. 점검 결과
+- 비회원 마이페이지 접근 제한: ProtectedRoute에서 /mypage 비로그인 접근 시 /login으로 이동.
+- 새로고침 로그인 상태 확인: Header와 ProtectedRoute에서 authStore initAuthListener 실행, onAuthStateChanged 사용.
+- 로딩 중 잘못된 리다이렉트 방지: isAuthLoading 동안 인증 확인 문구 표시 후 판단.
+- 회원 정보 조회: users/{uid} 조회 및 문서가 없을 때 기본 문서 생성.
+- 닉네임 수정: users/{uid}.nickname만 update 가능.
+- 비밀번호 수정: Firebase Authentication updatePassword 사용.
+- 주문 내역 조회: orders에서 userId/uid가 현재 uid인 문서 조회.
+- 장바구니 조회: carts에서 userId/uid가 현재 uid인 문서 조회.
+- 찜한 상품 조회: wishlists에서 userId/uid가 현재 uid인 문서 조회.
+- 장바구니 개별 삭제: carts 문서 id 기준 delete.
+- 찜한 상품 개별 삭제: wishlists 문서 id 기준 delete.
+- 각 영역 독립 로딩/오류: MyPage에서 profile/order/cart/wishlist 상태와 오류 state를 분리 사용.
+- localStorage 데이터 사용 여부: src 내부 localStorage/loadLocal/saveLocal 참조 없음. src/utils/localStorage.js 삭제.
+
+3. Firebase 보안 규칙
+Firebase Console > Firestore Database > 규칙 탭에서 아래 규칙을 직접 적용해야 실제 서비스에 반영된다.
+
+`ules
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isOwner(uid) {
+      return isSignedIn() && request.auth.uid == uid;
+    }
+
+    function hasOwner() {
+      return isSignedIn()
+        && (
+          resource.data.userId == request.auth.uid ||
+          resource.data.uid == request.auth.uid
+        );
+    }
+
+    function requestHasOwner() {
+      return isSignedIn()
+        && (
+          request.resource.data.userId == request.auth.uid ||
+          request.resource.data.uid == request.auth.uid
+        );
+    }
+
+    match /users/{uid} {
+      allow create: if isOwner(uid)
+        && request.resource.data.keys().hasOnly(['email', 'nickname', 'role', 'createAt'])
+        && request.resource.data.email == request.auth.token.email
+        && request.resource.data.nickname is string
+        && request.resource.data.nickname.size() > 0
+        && request.resource.data.role == 'user'
+        && request.resource.data.createAt == request.time;
+
+      allow read: if isOwner(uid);
+
+      allow update: if isOwner(uid)
+        && request.resource.data.diff(resource.data).changedKeys().hasOnly(['nickname'])
+        && request.resource.data.nickname is string
+        && request.resource.data.nickname.size() > 0
+        && request.resource.data.email == resource.data.email
+        && request.resource.data.role == resource.data.role
+        && request.resource.data.createAt == resource.data.createAt;
+
+      allow delete: if false;
+
+      match /{document=**} {
+        allow read, write: if isOwner(uid);
+      }
+    }
+
+    match /orders/{orderId} {
+      allow create: if isSignedIn()
+        && request.resource.data.keys().hasOnly([
+          'userId', 'uid', 'email', 'items', 'subtotal', 'deliveryfree',
+          'totalPrice', 'createAt', 'status'
+        ])
+        && request.resource.data.userId == request.auth.uid
+        && request.resource.data.uid == request.auth.uid
+        && request.resource.data.email == request.auth.token.email
+        && request.resource.data.items is list
+        && request.resource.data.items.size() > 0
+        && request.resource.data.subtotal is number
+        && request.resource.data.deliveryfree is number
+        && request.resource.data.totalPrice is number
+        && request.resource.data.totalPrice >= request.resource.data.subtotal
+        && request.resource.data.createAt == request.time
+        && request.resource.data.status == 'ordered';
+
+      allow read: if hasOwner();
+
+      allow update, delete: if false;
+    }
+
+    match /carts/{cartId} {
+      allow create: if isSignedIn()
+        && request.resource.data.keys().hasOnly([
+          'userId', 'uid', 'productId', 'productName', 'name', 'title',
+          'price', 'productPrice', 'discountPrice', 'quantity', 'image', 'category', 'createAt'
+        ])
+        && requestHasOwner()
+        && request.resource.data.quantity is number
+        && request.resource.data.quantity > 0;
+
+      allow read: if hasOwner();
+
+      allow update: if hasOwner()
+        && request.resource.data.diff(resource.data).changedKeys().hasOnly([
+          'productId', 'productName', 'name', 'title', 'price', 'productPrice',
+          'discountPrice', 'quantity', 'image', 'category', 'createAt'
+        ])
+        && request.resource.data.userId == resource.data.userId
+        && request.resource.data.uid == resource.data.uid
+        && request.resource.data.quantity is number
+        && request.resource.data.quantity > 0;
+
+      allow delete: if hasOwner();
+    }
+
+    match /wishlists/{wishlistId} {
+      allow create: if isSignedIn()
+        && request.resource.data.keys().hasOnly([
+          'userId', 'uid', 'productId', 'productName', 'name', 'title',
+          'price', 'productPrice', 'discountPrice', 'image', 'productImage', 'category', 'createAt'
+        ])
+        && requestHasOwner();
+
+      allow read: if hasOwner();
+
+      allow update: if hasOwner()
+        && request.resource.data.diff(resource.data).changedKeys().hasOnly([
+          'productId', 'productName', 'name', 'title', 'price', 'productPrice',
+          'discountPrice', 'image', 'productImage', 'category', 'createAt'
+        ])
+        && request.resource.data.userId == resource.data.userId
+        && request.resource.data.uid == resource.data.uid;
+
+      allow delete: if hasOwner();
+    }
+
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
+
+`
+
+4. 빌드 검사 결과
+- 일반 샌드박스 실행: Vite 내부 프로세스 실행이 spawn EPERM으로 차단됨.
+- 권한 승인 후 npm.cmd run build: 성공.
+- 참고: 번들 크기 500 kB 초과 경고가 표시되었지만 빌드는 완료됨.
+
+5. 남은 주의 사항
+- firestore.rules 파일 수정만으로는 배포되지 않는다. Firebase Console에서 직접 붙여넣어 게시해야 한다.
+- 기존 브라우저에 남아 있는 localStorage cart/wishlist 값은 더 이상 사용하지 않는다.
+- 주문/장바구니/찜 데이터는 로그인 사용자 기준 Firestore 데이터만 표시된다.
+
+[2026-07-29] 5-0단계 초기 관리자 계정 생성 준비 및 시도
+
+1. 관리자 계정 정보 기록
+- 이메일: asdf@asdf.com
+- 초기 비밀번호: 사용자 요청으로 전달된 초기 비밀번호 사용
+- 목표 Firestore 문서: users/{uid}
+- 목표 role: admin
+
+2. 작업 결과
+- Firebase Auth 계정 생성 스크립트를 추가했다.
+- 관리자 비밀번호는 파일에 직접 저장하지 않고 INITIAL_ADMIN_EMAIL, INITIAL_ADMIN_PASSWORD 환경변수로만 받도록 구성했다.
+- 실제 생성 시도 결과: Auth 계정은 이미 존재하여 로그인까지 성공했다.
+- Firestore users/{uid}.role=admin 쓰기는 현재 Firebase 서버에 배포된 보안 규칙에서 PERMISSION_DENIED로 거절되었다.
+- 따라서 users/{uid}.role=admin 적용은 아직 완료로 판단하지 않는다.
+
+3. 수정/추가 파일 및 이유
+- scripts/createInitialAdmin.mjs
+  - 초기 관리자 Auth 계정을 만들고 users/{uid}.role=admin 문서를 생성/보정하기 위한 실행 스크립트.
+  - 실제 비밀번호는 파일에 저장하지 않도록 환경변수 방식으로 구성했다.
+- firestore.rules
+  - 일반 회원가입 role=user 기능은 유지했다.
+  - 초기 관리자 이메일(asdf@asdf.com) 본인에 한해 users/{uid}.role=admin create/update를 허용하도록 보안 규칙을 보강했다.
+- historyCode.txt
+  - 관리자 계정 작업 내용, 생성 시도 결과, 보안 규칙 코드를 기록했다.
+
+4. Firebase 보안 규칙
+Firebase Console > Firestore Database > 규칙 탭에서 아래 규칙을 직접 적용해야 users/{uid}.role=admin 생성/보정이 가능하다.
+
+`ules
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isOwner(uid) {
+      return isSignedIn() && request.auth.uid == uid;
+    }
+
+    function isInitialAdminEmail() {
+      return isSignedIn() && request.auth.token.email == 'asdf@asdf.com';
+    }
+
+    function hasOwner() {
+      return isSignedIn()
+        && (
+          resource.data.userId == request.auth.uid ||
+          resource.data.uid == request.auth.uid
+        );
+    }
+
+    function requestHasOwner() {
+      return isSignedIn()
+        && (
+          request.resource.data.userId == request.auth.uid ||
+          request.resource.data.uid == request.auth.uid
+        );
+    }
+
+    match /users/{uid} {
+      allow create: if isOwner(uid)
+        && request.resource.data.keys().hasOnly(['email', 'nickname', 'role', 'createAt'])
+        && request.resource.data.email == request.auth.token.email
+        && request.resource.data.nickname is string
+        && request.resource.data.nickname.size() > 0
+        && request.resource.data.createAt == request.time
+        && (
+          request.resource.data.role == 'user' ||
+          (isInitialAdminEmail() && request.resource.data.role == 'admin')
+        );
+
+      allow read: if isOwner(uid);
+
+      allow update: if isOwner(uid)
+        && (
+          (
+            request.resource.data.diff(resource.data).changedKeys().hasOnly(['nickname'])
+            && request.resource.data.nickname is string
+            && request.resource.data.nickname.size() > 0
+            && request.resource.data.email == resource.data.email
+            && request.resource.data.role == resource.data.role
+            && request.resource.data.createAt == resource.data.createAt
+          ) ||
+          (
+            isInitialAdminEmail()
+            && request.resource.data.diff(resource.data).changedKeys().hasOnly(['nickname', 'role'])
+            && request.resource.data.email == resource.data.email
+            && request.resource.data.nickname is string
+            && request.resource.data.nickname.size() > 0
+            && request.resource.data.role == 'admin'
+            && request.resource.data.createAt == resource.data.createAt
+          )
+        );
+
+      allow delete: if false;
+
+      match /{document=**} {
+        allow read, write: if isOwner(uid);
+      }
+    }
+
+    match /orders/{orderId} {
+      allow create: if isSignedIn()
+        && request.resource.data.keys().hasOnly([
+          'userId', 'uid', 'email', 'items', 'subtotal', 'deliveryfree',
+          'totalPrice', 'createAt', 'status'
+        ])
+        && request.resource.data.userId == request.auth.uid
+        && request.resource.data.uid == request.auth.uid
+        && request.resource.data.email == request.auth.token.email
+        && request.resource.data.items is list
+        && request.resource.data.items.size() > 0
+        && request.resource.data.subtotal is number
+        && request.resource.data.deliveryfree is number
+        && request.resource.data.totalPrice is number
+        && request.resource.data.totalPrice >= request.resource.data.subtotal
+        && request.resource.data.createAt == request.time
+        && request.resource.data.status == 'ordered';
+
+      allow read: if hasOwner();
+
+      allow update, delete: if false;
+    }
+
+    match /carts/{cartId} {
+      allow create: if isSignedIn()
+        && request.resource.data.keys().hasOnly([
+          'userId', 'uid', 'productId', 'productName', 'name', 'title',
+          'price', 'productPrice', 'discountPrice', 'quantity', 'image', 'category', 'createAt'
+        ])
+        && requestHasOwner()
+        && request.resource.data.quantity is number
+        && request.resource.data.quantity > 0;
+
+      allow read: if hasOwner();
+
+      allow update: if hasOwner()
+        && request.resource.data.diff(resource.data).changedKeys().hasOnly([
+          'productId', 'productName', 'name', 'title', 'price', 'productPrice',
+          'discountPrice', 'quantity', 'image', 'category', 'createAt'
+        ])
+        && request.resource.data.userId == resource.data.userId
+        && request.resource.data.uid == resource.data.uid
+        && request.resource.data.quantity is number
+        && request.resource.data.quantity > 0;
+
+      allow delete: if hasOwner();
+    }
+
+    match /wishlists/{wishlistId} {
+      allow create: if isSignedIn()
+        && request.resource.data.keys().hasOnly([
+          'userId', 'uid', 'productId', 'productName', 'name', 'title',
+          'price', 'productPrice', 'discountPrice', 'image', 'productImage', 'category', 'createAt'
+        ])
+        && requestHasOwner();
+
+      allow read: if hasOwner();
+
+      allow update: if hasOwner()
+        && request.resource.data.diff(resource.data).changedKeys().hasOnly([
+          'productId', 'productName', 'name', 'title', 'price', 'productPrice',
+          'discountPrice', 'image', 'productImage', 'category', 'createAt'
+        ])
+        && request.resource.data.userId == resource.data.userId
+        && request.resource.data.uid == resource.data.uid;
+
+      allow delete: if hasOwner();
+    }
+
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
+
+
+`
+
+5. 빌드 검사 결과
+- 일반 샌드박스 실행: Vite 내부 프로세스 실행이 spawn EPERM으로 차단됨.
+- 권한 승인 후 npm.cmd run build: 성공.
+- 참고: 번들 크기 500 kB 초과 경고가 표시되었지만 빌드는 완료됨.
+
+6. 주의 사항
+- 이 작업은 보안 규칙 배포 전에는 관리자 role 적용이 완료되지 않는다.
+- Firebase Console에서 firestore.rules 내용을 직접 게시한 뒤 scripts/createInitialAdmin.mjs를 다시 실행해야 한다.
+- 현재 환경에는 firebase CLI 설정 파일과 firebase 명령이 없어 내가 직접 규칙 배포까지 수행하지 못했다.
+
+[2026-07-29] 5-0/5-1단계 초기 관리자 계정 및 관리자 권한 설정
+
+1. 관리자 계정 정보 기록
+- 이메일: admin@a.com
+- 초기 비밀번호: 사용자 요청값 사용. 보안을 위해 파일에는 비밀번호 원문을 기록하지 않음.
+- 목표 Firestore 문서: users/{uid}
+- 목표 role: admin
+
+2. 초기 관리자 계정 생성 시도 결과
+- scripts/createInitialAdmin.mjs 실행 시 Firebase Auth 계정 생성은 시도됨.
+- Firestore users/{uid}.role=admin 쓰기가 현재 Firebase 서버에 배포된 보안 규칙에서 PERMISSION_DENIED로 거절됨.
+- 스크립트가 Auth 계정을 롤백하여 현재 admin@a.com 관리자 계정 생성은 완료되지 않음.
+- Firebase Console에 아래 firestore.rules를 먼저 직접 게시한 뒤 관리자 스크립트를 다시 실행해야 함.
+
+3. 관리자 권한 설정
+- src/store/authStore.js
+  - 로그인 후 users/{uid} 문서의 role을 읽고 role === 'admin'이면 isAdmin=true로 저장하도록 수정.
+- src/components/AdminRoute.jsx
+  - 관리자 전용 라우트에서 isAuthLoading 중 잘못된 이동을 막고, 비로그인은 /login, 일반 회원은 /로 이동하도록 추가.
+- firestore.rules
+  - users/{uid}.role == 'admin'을 확인하는 isAdmin() 함수를 추가.
+  - 관리자 지정은 일반 회원가입에서 불가능하게 유지.
+  - 초기 관리자 이메일(admin@a.com)은 관리자 스크립트/Console 용도로만 role=admin 생성/보정 가능하게 제한.
+
+4. 수정/추가 파일 및 이유
+- scripts/createInitialAdmin.mjs
+  - 관리자 계정 생성 스크립트. 실제 이메일/비밀번호는 환경변수로만 입력받도록 유지.
+- src/store/authStore.js
+  - users/{uid}.role 기반 관리자 권한 상태(isAdmin) 추가.
+- src/components/AdminRoute.jsx
+  - 관리자 권한 확인 라우트 컴포넌트 추가.
+- firestore.rules
+  - 초기 관리자 계정과 관리자 권한 확인용 보안 규칙 작성.
+- historyCode.txt
+  - 관리자 계정 작업과 보안 규칙 기록.
+
+5. Firebase 보안 규칙
+Firebase Console > Firestore Database > 규칙 탭에서 아래 규칙을 직접 게시해야 실제 적용됨.
+
+`ules
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isOwner(uid) {
+      return isSignedIn() && request.auth.uid == uid;
+    }
+
+    function isAdmin() {
+      return isSignedIn()
+        && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
+    }
+
+    function isInitialAdminEmail() {
+      return isSignedIn() && request.auth.token.email == 'admin@a.com';
+    }
+
+    function hasOwner() {
+      return isSignedIn()
+        && (
+          resource.data.userId == request.auth.uid ||
+          resource.data.uid == request.auth.uid
+        );
+    }
+
+    function requestHasOwner() {
+      return isSignedIn()
+        && (
+          request.resource.data.userId == request.auth.uid ||
+          request.resource.data.uid == request.auth.uid
+        );
+    }
+
+    match /users/{uid} {
+      allow create: if isOwner(uid)
+        && request.resource.data.keys().hasOnly(['email', 'nickname', 'role', 'createAt'])
+        && request.resource.data.email == request.auth.token.email
+        && request.resource.data.nickname is string
+        && request.resource.data.nickname.size() > 0
+        && request.resource.data.createAt == request.time
+        && (
+          request.resource.data.role == 'user' ||
+          (isInitialAdminEmail() && request.resource.data.role == 'admin')
+        );
+
+      allow read: if isOwner(uid) || isAdmin();
+
+      allow update: if isOwner(uid)
+        && (
+          (
+            request.resource.data.diff(resource.data).changedKeys().hasOnly(['nickname'])
+            && request.resource.data.nickname is string
+            && request.resource.data.nickname.size() > 0
+            && request.resource.data.email == resource.data.email
+            && request.resource.data.role == resource.data.role
+            && request.resource.data.createAt == resource.data.createAt
+          ) ||
+          (
+            isInitialAdminEmail()
+            && request.resource.data.diff(resource.data).changedKeys().hasOnly(['nickname', 'role'])
+            && request.resource.data.email == resource.data.email
+            && request.resource.data.nickname is string
+            && request.resource.data.nickname.size() > 0
+            && request.resource.data.role == 'admin'
+            && request.resource.data.createAt == resource.data.createAt
+          )
+        );
+
+      allow delete: if false;
+
+      match /{document=**} {
+        allow read, write: if isOwner(uid);
+      }
+    }
+
+    match /orders/{orderId} {
+      allow create: if isSignedIn()
+        && request.resource.data.keys().hasOnly([
+          'userId', 'uid', 'email', 'items', 'subtotal', 'deliveryfree',
+          'totalPrice', 'createAt', 'status'
+        ])
+        && request.resource.data.userId == request.auth.uid
+        && request.resource.data.uid == request.auth.uid
+        && request.resource.data.email == request.auth.token.email
+        && request.resource.data.items is list
+        && request.resource.data.items.size() > 0
+        && request.resource.data.subtotal is number
+        && request.resource.data.deliveryfree is number
+        && request.resource.data.totalPrice is number
+        && request.resource.data.totalPrice >= request.resource.data.subtotal
+        && request.resource.data.createAt == request.time
+        && request.resource.data.status == 'ordered';
+
+      allow read: if hasOwner() || isAdmin();
+
+      allow update, delete: if false;
+    }
+
+    match /carts/{cartId} {
+      allow create: if isSignedIn()
+        && request.resource.data.keys().hasOnly([
+          'userId', 'uid', 'productId', 'productName', 'name', 'title',
+          'price', 'productPrice', 'discountPrice', 'quantity', 'image', 'category', 'createAt'
+        ])
+        && requestHasOwner()
+        && request.resource.data.quantity is number
+        && request.resource.data.quantity > 0;
+
+      allow read: if hasOwner() || isAdmin();
+
+      allow update: if hasOwner()
+        && request.resource.data.diff(resource.data).changedKeys().hasOnly([
+          'productId', 'productName', 'name', 'title', 'price', 'productPrice',
+          'discountPrice', 'quantity', 'image', 'category', 'createAt'
+        ])
+        && request.resource.data.userId == resource.data.userId
+        && request.resource.data.uid == resource.data.uid
+        && request.resource.data.quantity is number
+        && request.resource.data.quantity > 0;
+
+      allow delete: if hasOwner();
+    }
+
+    match /wishlists/{wishlistId} {
+      allow create: if isSignedIn()
+        && request.resource.data.keys().hasOnly([
+          'userId', 'uid', 'productId', 'productName', 'name', 'title',
+          'price', 'productPrice', 'discountPrice', 'image', 'productImage', 'category', 'createAt'
+        ])
+        && requestHasOwner();
+
+      allow read: if hasOwner() || isAdmin();
+
+      allow update: if hasOwner()
+        && request.resource.data.diff(resource.data).changedKeys().hasOnly([
+          'productId', 'productName', 'name', 'title', 'price', 'productPrice',
+          'discountPrice', 'image', 'productImage', 'category', 'createAt'
+        ])
+        && request.resource.data.userId == resource.data.userId
+        && request.resource.data.uid == resource.data.uid;
+
+      allow delete: if hasOwner();
+    }
+
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
+
+`
+
+6. 빌드 검사 결과
+- 일반 샌드박스 실행: Vite 내부 프로세스 실행이 spawn EPERM으로 차단됨.
+- 권한 승인 후 npm.cmd run build: 성공.
+- 참고: 번들 크기 500 kB 초과 경고가 표시되었지만 빌드는 완료됨.
+
+[2026-07-29] 5-2단계 관리자 페이지 접근 제한 구현
+
+1. 수정/추가 파일 및 이유
+- src/pages/Admin.jsx
+  - /admin 기본 화면으로 관리자 대시보드와 메뉴별 기본 콘텐츠를 추가했다.
+  - 메뉴: 대시보드, 회원관리, 상품관리(재고관리), 추천상품관리, 공지사항관리.
+- src/pages/Admin.module.scss
+  - 좌측 사이드 메뉴 + 우측 콘텐츠 레이아웃을 SCSS Modules 방식으로 작성했다.
+  - 기존 마이페이지 계열 디자인 톤을 유지했다.
+- src/App.jsx
+  - AdminRoute로 보호된 /admin 라우트를 추가했다.
+- src/components/Header.jsx
+  - users/{uid}.role이 admin인 사용자에게만 관리자 메뉴가 보이도록 추가했다.
+- historyCode.txt
+  - 관리자 페이지 접근 제한 작업 내용을 기록했다.
+
+2. 접근 제한 점검
+- 관리자만 접근 가능: AdminRoute에서 isAdmin이 true일 때만 /admin 표시.
+- 일반 사용자 접근 차단: 로그인했지만 isAdmin이 false이면 /로 이동.
+- 비로그인 접근 차단: /login으로 이동.
+- 권한 확인 중 로딩 표시: isAuthLoading 동안 '관리자 권한을 확인중입니다.' 표시.
+- Header 관리자 메뉴: isAdmin일 때만 /admin 링크 표시.
+- /admin 기본 화면: Admin 컴포넌트의 기본 activeMenu가 dashboard.
+- 관리자 비밀번호 관리: 별도 관리자 화면에 만들지 않고 기존 마이페이지 비밀번호 수정 기능을 사용.
+
+3. Firebase 보안 규칙
+- 이번 단계에서 Firestore 쓰기 구조는 새로 추가하지 않았다.
+- 관리자 권한 기준은 기존 보안 규칙의 users/{uid}.role == 'admin' 확인을 유지한다.
+- Firebase Console에 적용해야 하는 현재 전체 보안 규칙은 아래와 같다.
+
+`ules
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isOwner(uid) {
+      return isSignedIn() && request.auth.uid == uid;
+    }
+
+    function isAdmin() {
+      return isSignedIn()
+        && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
+    }
+
+    function isInitialAdminEmail() {
+      return isSignedIn() && request.auth.token.email == 'admin@a.com';
+    }
+
+    function hasOwner() {
+      return isSignedIn()
+        && (
+          resource.data.userId == request.auth.uid ||
+          resource.data.uid == request.auth.uid
+        );
+    }
+
+    function requestHasOwner() {
+      return isSignedIn()
+        && (
+          request.resource.data.userId == request.auth.uid ||
+          request.resource.data.uid == request.auth.uid
+        );
+    }
+
+    match /users/{uid} {
+      allow create: if isOwner(uid)
+        && request.resource.data.keys().hasOnly(['email', 'nickname', 'role', 'createAt'])
+        && request.resource.data.email == request.auth.token.email
+        && request.resource.data.nickname is string
+        && request.resource.data.nickname.size() > 0
+        && request.resource.data.createAt == request.time
+        && (
+          request.resource.data.role == 'user' ||
+          (isInitialAdminEmail() && request.resource.data.role == 'admin')
+        );
+
+      allow read: if isOwner(uid) || isAdmin();
+
+      allow update: if isOwner(uid)
+        && (
+          (
+            request.resource.data.diff(resource.data).changedKeys().hasOnly(['nickname'])
+            && request.resource.data.nickname is string
+            && request.resource.data.nickname.size() > 0
+            && request.resource.data.email == resource.data.email
+            && request.resource.data.role == resource.data.role
+            && request.resource.data.createAt == resource.data.createAt
+          ) ||
+          (
+            isInitialAdminEmail()
+            && request.resource.data.diff(resource.data).changedKeys().hasOnly(['nickname', 'role'])
+            && request.resource.data.email == resource.data.email
+            && request.resource.data.nickname is string
+            && request.resource.data.nickname.size() > 0
+            && request.resource.data.role == 'admin'
+            && request.resource.data.createAt == resource.data.createAt
+          )
+        );
+
+      allow delete: if false;
+
+      match /{document=**} {
+        allow read, write: if isOwner(uid);
+      }
+    }
+
+    match /orders/{orderId} {
+      allow create: if isSignedIn()
+        && request.resource.data.keys().hasOnly([
+          'userId', 'uid', 'email', 'items', 'subtotal', 'deliveryfree',
+          'totalPrice', 'createAt', 'status'
+        ])
+        && request.resource.data.userId == request.auth.uid
+        && request.resource.data.uid == request.auth.uid
+        && request.resource.data.email == request.auth.token.email
+        && request.resource.data.items is list
+        && request.resource.data.items.size() > 0
+        && request.resource.data.subtotal is number
+        && request.resource.data.deliveryfree is number
+        && request.resource.data.totalPrice is number
+        && request.resource.data.totalPrice >= request.resource.data.subtotal
+        && request.resource.data.createAt == request.time
+        && request.resource.data.status == 'ordered';
+
+      allow read: if hasOwner() || isAdmin();
+
+      allow update, delete: if false;
+    }
+
+    match /carts/{cartId} {
+      allow create: if isSignedIn()
+        && request.resource.data.keys().hasOnly([
+          'userId', 'uid', 'productId', 'productName', 'name', 'title',
+          'price', 'productPrice', 'discountPrice', 'quantity', 'image', 'category', 'createAt'
+        ])
+        && requestHasOwner()
+        && request.resource.data.quantity is number
+        && request.resource.data.quantity > 0;
+
+      allow read: if hasOwner() || isAdmin();
+
+      allow update: if hasOwner()
+        && request.resource.data.diff(resource.data).changedKeys().hasOnly([
+          'productId', 'productName', 'name', 'title', 'price', 'productPrice',
+          'discountPrice', 'quantity', 'image', 'category', 'createAt'
+        ])
+        && request.resource.data.userId == resource.data.userId
+        && request.resource.data.uid == resource.data.uid
+        && request.resource.data.quantity is number
+        && request.resource.data.quantity > 0;
+
+      allow delete: if hasOwner();
+    }
+
+    match /wishlists/{wishlistId} {
+      allow create: if isSignedIn()
+        && request.resource.data.keys().hasOnly([
+          'userId', 'uid', 'productId', 'productName', 'name', 'title',
+          'price', 'productPrice', 'discountPrice', 'image', 'productImage', 'category', 'createAt'
+        ])
+        && requestHasOwner();
+
+      allow read: if hasOwner() || isAdmin();
+
+      allow update: if hasOwner()
+        && request.resource.data.diff(resource.data).changedKeys().hasOnly([
+          'productId', 'productName', 'name', 'title', 'price', 'productPrice',
+          'discountPrice', 'image', 'productImage', 'category', 'createAt'
+        ])
+        && request.resource.data.userId == resource.data.userId
+        && request.resource.data.uid == resource.data.uid;
+
+      allow delete: if hasOwner();
+    }
+
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
+
+`
+
+4. 테스트 예정
+- npm.cmd run build 실행 예정.
+
+5. 빌드 검사 결과
+- 일반 샌드박스 실행: Vite 내부 프로세스 실행이 spawn EPERM으로 차단됨.
+- 권한 승인 후 npm.cmd run build: 성공.
+- 참고: 번들 크기 500 kB 초과 경고가 표시되었지만 빌드는 완료됨.
+
+[2026-07-29] 5-3단계 관리자 페이지 회원 관리 구현
+
+1. 수정/추가 파일 및 이유
+- src/firebase/adminMemberApi.js
+  - 관리자가 users 컬렉션을 createAt desc 기준으로 조회하는 전용 API를 추가했다.
+  - 조회 권한 오류는 한글 메시지로 반환한다.
+- src/components/AdminLayout.jsx
+  - 관리자 좌측 사이드 메뉴와 우측 콘텐츠 레이아웃을 공통 컴포넌트로 분리했다.
+- src/pages/Admin.jsx
+  - 공통 관리자 레이아웃을 사용하도록 정리했다.
+- src/pages/AdminMembers.jsx
+  - /admin/members 전용 회원관리 페이지를 추가했다.
+  - 닉네임, 이메일, 가입일을 표시하고 최신 가입순으로 조회한다.
+- src/pages/AdminPlaceholder.jsx
+  - 아직 데이터 연결 전인 관리자 메뉴들이 404로 가지 않도록 기본 준비 화면을 추가했다.
+- src/pages/Admin.module.scss
+  - 관리자 링크 메뉴, 회원 테이블, 로딩/오류 메시지 스타일을 추가했다.
+- src/App.jsx
+  - /admin/members 라우트를 AdminRoute 내부에 추가했다.
+- historyCode.txt
+  - 회원관리 작업 내용과 보안 규칙을 기록했다.
+
+2. 조건 점검
+- 관리자만 전체 조회: /admin/members는 AdminRoute 내부에 있고, Firestore rules의 users read가 isAdmin()일 때 전체 조회를 허용한다.
+- 일반 사용자는 자신의 문서만 조회: firestore.rules의 users read는 isOwner(uid) 또는 isAdmin()만 허용한다.
+- 최신 가입순: adminMemberApi에서 orderBy('createAt', 'desc') 사용.
+- 전용 페이지: /admin/members 추가.
+- 기존 기능 유지: 일반 로그인/회원가입, 마이페이지, 장바구니, 찜, 주문 라우터 구조는 유지했다.
+
+3. Firebase 보안 규칙
+이번 단계에서 보안 규칙 파일은 기존 관리자 권한 규칙을 유지했다. Firebase Console에 적용되어 있어야 /admin/members 전체 회원 조회가 가능하다.
+
+`ules
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isOwner(uid) {
+      return isSignedIn() && request.auth.uid == uid;
+    }
+
+    function isAdmin() {
+      return isSignedIn()
+        && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
+    }
+
+    function isInitialAdminEmail() {
+      return isSignedIn() && request.auth.token.email == 'admin@a.com';
+    }
+
+    function hasOwner() {
+      return isSignedIn()
+        && (
+          resource.data.userId == request.auth.uid ||
+          resource.data.uid == request.auth.uid
+        );
+    }
+
+    function requestHasOwner() {
+      return isSignedIn()
+        && (
+          request.resource.data.userId == request.auth.uid ||
+          request.resource.data.uid == request.auth.uid
+        );
+    }
+
+    match /users/{uid} {
+      allow create: if isOwner(uid)
+        && request.resource.data.keys().hasOnly(['email', 'nickname', 'role', 'createAt'])
+        && request.resource.data.email == request.auth.token.email
+        && request.resource.data.nickname is string
+        && request.resource.data.nickname.size() > 0
+        && request.resource.data.createAt == request.time
+        && (
+          request.resource.data.role == 'user' ||
+          (isInitialAdminEmail() && request.resource.data.role == 'admin')
+        );
+
+      allow read: if isOwner(uid) || isAdmin();
+
+      allow update: if isOwner(uid)
+        && (
+          (
+            request.resource.data.diff(resource.data).changedKeys().hasOnly(['nickname'])
+            && request.resource.data.nickname is string
+            && request.resource.data.nickname.size() > 0
+            && request.resource.data.email == resource.data.email
+            && request.resource.data.role == resource.data.role
+            && request.resource.data.createAt == resource.data.createAt
+          ) ||
+          (
+            isInitialAdminEmail()
+            && request.resource.data.diff(resource.data).changedKeys().hasOnly(['nickname', 'role'])
+            && request.resource.data.email == resource.data.email
+            && request.resource.data.nickname is string
+            && request.resource.data.nickname.size() > 0
+            && request.resource.data.role == 'admin'
+            && request.resource.data.createAt == resource.data.createAt
+          )
+        );
+
+      allow delete: if false;
+
+      match /{document=**} {
+        allow read, write: if isOwner(uid);
+      }
+    }
+
+    match /orders/{orderId} {
+      allow create: if isSignedIn()
+        && request.resource.data.keys().hasOnly([
+          'userId', 'uid', 'email', 'items', 'subtotal', 'deliveryfree',
+          'totalPrice', 'createAt', 'status'
+        ])
+        && request.resource.data.userId == request.auth.uid
+        && request.resource.data.uid == request.auth.uid
+        && request.resource.data.email == request.auth.token.email
+        && request.resource.data.items is list
+        && request.resource.data.items.size() > 0
+        && request.resource.data.subtotal is number
+        && request.resource.data.deliveryfree is number
+        && request.resource.data.totalPrice is number
+        && request.resource.data.totalPrice >= request.resource.data.subtotal
+        && request.resource.data.createAt == request.time
+        && request.resource.data.status == 'ordered';
+
+      allow read: if hasOwner() || isAdmin();
+
+      allow update, delete: if false;
+    }
+
+    match /carts/{cartId} {
+      allow create: if isSignedIn()
+        && request.resource.data.keys().hasOnly([
+          'userId', 'uid', 'productId', 'productName', 'name', 'title',
+          'price', 'productPrice', 'discountPrice', 'quantity', 'image', 'category', 'createAt'
+        ])
+        && requestHasOwner()
+        && request.resource.data.quantity is number
+        && request.resource.data.quantity > 0;
+
+      allow read: if hasOwner() || isAdmin();
+
+      allow update: if hasOwner()
+        && request.resource.data.diff(resource.data).changedKeys().hasOnly([
+          'productId', 'productName', 'name', 'title', 'price', 'productPrice',
+          'discountPrice', 'quantity', 'image', 'category', 'createAt'
+        ])
+        && request.resource.data.userId == resource.data.userId
+        && request.resource.data.uid == resource.data.uid
+        && request.resource.data.quantity is number
+        && request.resource.data.quantity > 0;
+
+      allow delete: if hasOwner();
+    }
+
+    match /wishlists/{wishlistId} {
+      allow create: if isSignedIn()
+        && request.resource.data.keys().hasOnly([
+          'userId', 'uid', 'productId', 'productName', 'name', 'title',
+          'price', 'productPrice', 'discountPrice', 'image', 'productImage', 'category', 'createAt'
+        ])
+        && requestHasOwner();
+
+      allow read: if hasOwner() || isAdmin();
+
+      allow update: if hasOwner()
+        && request.resource.data.diff(resource.data).changedKeys().hasOnly([
+          'productId', 'productName', 'name', 'title', 'price', 'productPrice',
+          'discountPrice', 'image', 'productImage', 'category', 'createAt'
+        ])
+        && request.resource.data.userId == resource.data.userId
+        && request.resource.data.uid == resource.data.uid;
+
+      allow delete: if hasOwner();
+    }
+
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
+
+`
+
+4. 테스트 예정
+- npm.cmd run build 실행 예정.
+
+5. 빌드 검사 결과
+- 일반 샌드박스 실행: Vite 내부 프로세스 실행이 spawn EPERM으로 차단됨.
+- 권한 승인 후 npm.cmd run build: 성공.
+- 참고: 번들 크기 500 kB 초과 경고가 표시되었지만 빌드는 완료됨.
+
+[2026-07-29] 5-4단계 관리자 페이지 상품관리 및 재고관리 구현
+
+1. 수정/추가 파일 및 이유
+- src/firebase/productApi.js
+  - Firestore products 컬렉션 조회, 상세 조회, 등록, 수정, 삭제 API를 추가했다.
+  - 일반 상품 화면은 Firestore products가 비어 있을 때 기존 products.json을 임시 fallback으로 사용해 기존 화면이 비지 않도록 했다.
+  - 관리자 상품관리는 Firestore 데이터만 관리하도록 fallback을 끄고 사용한다.
+- src/pages/AdminProducts.jsx
+  - /admin/products 상품관리(재고관리) 페이지를 구현했다.
+  - 상품명, 영문명, 카테고리 명, 카테고리 값, 가격, 할인율, 재고, 이미지, 설명, 추천 여부 입력을 추가했다.
+  - 상품 등록, 수정, 삭제 기능을 Firestore와 연결했다.
+- src/pages/Admin.module.scss
+  - 관리자 상품 폼, 상품 목록, 수정/삭제 버튼 스타일을 추가했다.
+- src/App.jsx
+  - /admin/products 라우트를 실제 AdminProducts 페이지로 연결했다.
+- src/pages/Products.jsx
+  - 상품 목록을 Firestore products 기준으로 조회하도록 수정했다.
+- src/pages/ProductDetail.jsx
+  - 상품 상세를 Firestore products 문서 id 기준으로 조회하도록 수정했다.
+  - 기존 꽃 구성은 마이그레이션된 legacyId 기준으로 유지되도록 보정했다.
+- src/pages/SearchResult.jsx
+  - 상품 검색을 Firestore products 기준으로 조회하도록 수정하고 깨진 주석/마크업을 정리했다.
+- src/pages/Home.jsx
+  - 추천상품을 Firestore isRecommended 기준으로 표시하도록 수정했다.
+- scripts/migrateProductsToFirestore.mjs
+  - public/data/products.json을 Firestore products 컬렉션으로 마이그레이션하는 스크립트를 추가했다.
+  - Firestore 자동 id를 사용하고 기존 products.json id는 legacyId로 보존한다.
+  - createAt/updateAt은 serverTimestamp()를 사용한다.
+- firestore.rules
+  - products 컬렉션 보안 규칙을 추가했다.
+  - 상품 읽기는 공개, 등록/수정/삭제는 users/{uid}.role == admin인 관리자만 가능하도록 제한했다.
+
+2. 조건 점검
+- products.json 구조 최대한 유지: name, nameEn, category, categoryValue, price, discountRate, image를 유지하고 stock, description, isRecommended, createAt, updateAt을 추가했다.
+- Firestore 자동 id: 등록과 마이그레이션 모두 addDoc 사용.
+- serverTimestamp(): createAt/updateAt에 적용.
+- isRecommended 사용: 관리자 입력 및 홈 추천상품 표시 기준으로 적용.
+- 관리자만 등록/수정/삭제: AdminRoute와 firestore.rules isAdmin()으로 제한.
+- products.json -> firestore 마이그레이션: scripts/migrateProductsToFirestore.mjs 작성 및 실행 시도.
+- firestore 상품으로 목록/상세 연결: Products, ProductDetail, SearchResult, Home을 productApi 기준으로 연결.
+
+3. 마이그레이션 실행 결과
+- scripts/migrateProductsToFirestore.mjs 실행 시 products.json BOM 처리를 보정했다.
+- 이후 Firebase Firestore 쓰기에서 permission-denied가 발생했다.
+- 원인: Firebase Console에 products 규칙이 아직 게시되지 않았거나 현재 로그인 관리자 계정이 서버 규칙에서 role=admin으로 인정되지 않는 상태.
+- 아래 firestore.rules를 Firebase Console에 직접 게시한 뒤 마이그레이션 스크립트를 다시 실행해야 한다.
+
+4. Firebase 보안 규칙
+Firebase Console > Firestore Database > 규칙 탭에서 아래 규칙을 직접 게시해야 실제 적용된다.
+
+`ules
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isOwner(uid) {
+      return isSignedIn() && request.auth.uid == uid;
+    }
+
+    function isAdmin() {
+      return isSignedIn()
+        && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
+    }
+
+    function isInitialAdminEmail() {
+      return isSignedIn() && request.auth.token.email == 'admin@a.com';
+    }
+
+    function hasOwner() {
+      return isSignedIn()
+        && (
+          resource.data.userId == request.auth.uid ||
+          resource.data.uid == request.auth.uid
+        );
+    }
+
+    function requestHasOwner() {
+      return isSignedIn()
+        && (
+          request.resource.data.userId == request.auth.uid ||
+          request.resource.data.uid == request.auth.uid
+        );
+    }
+
+    match /users/{uid} {
+      allow create: if isOwner(uid)
+        && request.resource.data.keys().hasOnly(['email', 'nickname', 'role', 'createAt'])
+        && request.resource.data.email == request.auth.token.email
+        && request.resource.data.nickname is string
+        && request.resource.data.nickname.size() > 0
+        && request.resource.data.createAt == request.time
+        && (
+          request.resource.data.role == 'user' ||
+          (isInitialAdminEmail() && request.resource.data.role == 'admin')
+        );
+
+      allow read: if isOwner(uid) || isAdmin();
+
+      allow update: if isOwner(uid)
+        && (
+          (
+            request.resource.data.diff(resource.data).changedKeys().hasOnly(['nickname'])
+            && request.resource.data.nickname is string
+            && request.resource.data.nickname.size() > 0
+            && request.resource.data.email == resource.data.email
+            && request.resource.data.role == resource.data.role
+            && request.resource.data.createAt == resource.data.createAt
+          ) ||
+          (
+            isInitialAdminEmail()
+            && request.resource.data.diff(resource.data).changedKeys().hasOnly(['nickname', 'role'])
+            && request.resource.data.email == resource.data.email
+            && request.resource.data.nickname is string
+            && request.resource.data.nickname.size() > 0
+            && request.resource.data.role == 'admin'
+            && request.resource.data.createAt == resource.data.createAt
+          )
+        );
+
+      allow delete: if false;
+
+      match /{document=**} {
+        allow read, write: if isOwner(uid);
+      }
+    }
+
+    match /orders/{orderId} {
+      allow create: if isSignedIn()
+        && request.resource.data.keys().hasOnly([
+          'userId', 'uid', 'email', 'items', 'subtotal', 'deliveryfree',
+          'totalPrice', 'createAt', 'status'
+        ])
+        && request.resource.data.userId == request.auth.uid
+        && request.resource.data.uid == request.auth.uid
+        && request.resource.data.email == request.auth.token.email
+        && request.resource.data.items is list
+        && request.resource.data.items.size() > 0
+        && request.resource.data.subtotal is number
+        && request.resource.data.deliveryfree is number
+        && request.resource.data.totalPrice is number
+        && request.resource.data.totalPrice >= request.resource.data.subtotal
+        && request.resource.data.createAt == request.time
+        && request.resource.data.status == 'ordered';
+
+      allow read: if hasOwner() || isAdmin();
+
+      allow update, delete: if false;
+    }
+
+    match /carts/{cartId} {
+      allow create: if isSignedIn()
+        && request.resource.data.keys().hasOnly([
+          'userId', 'uid', 'productId', 'productName', 'name', 'title',
+          'price', 'productPrice', 'discountPrice', 'quantity', 'image', 'category', 'createAt'
+        ])
+        && requestHasOwner()
+        && request.resource.data.quantity is number
+        && request.resource.data.quantity > 0;
+
+      allow read: if hasOwner() || isAdmin();
+
+      allow update: if hasOwner()
+        && request.resource.data.diff(resource.data).changedKeys().hasOnly([
+          'productId', 'productName', 'name', 'title', 'price', 'productPrice',
+          'discountPrice', 'quantity', 'image', 'category', 'createAt'
+        ])
+        && request.resource.data.userId == resource.data.userId
+        && request.resource.data.uid == resource.data.uid
+        && request.resource.data.quantity is number
+        && request.resource.data.quantity > 0;
+
+      allow delete: if hasOwner();
+    }
+
+    match /wishlists/{wishlistId} {
+      allow create: if isSignedIn()
+        && request.resource.data.keys().hasOnly([
+          'userId', 'uid', 'productId', 'productName', 'name', 'title',
+          'price', 'productPrice', 'discountPrice', 'image', 'productImage', 'category', 'createAt'
+        ])
+        && requestHasOwner();
+
+      allow read: if hasOwner() || isAdmin();
+
+      allow update: if hasOwner()
+        && request.resource.data.diff(resource.data).changedKeys().hasOnly([
+          'productId', 'productName', 'name', 'title', 'price', 'productPrice',
+          'discountPrice', 'image', 'productImage', 'category', 'createAt'
+        ])
+        && request.resource.data.userId == resource.data.userId
+        && request.resource.data.uid == resource.data.uid;
+
+      allow delete: if hasOwner();
+    }
+    match /products/{productId} {
+      allow read: if true;
+
+      allow create: if isAdmin()
+        && request.resource.data.keys().hasOnly([
+          'legacyId', 'name', 'nameEn', 'category', 'categoryValue', 'price',
+          'discountRate', 'stock', 'image', 'description', 'isRecommended',
+          'createAt', 'updateAt'
+        ])
+        && request.resource.data.name is string
+        && request.resource.data.name.size() > 0
+        && request.resource.data.category is string
+        && request.resource.data.category.size() > 0
+        && request.resource.data.categoryValue is string
+        && request.resource.data.categoryValue.size() > 0
+        && request.resource.data.price is number
+        && request.resource.data.price >= 0
+        && request.resource.data.discountRate is number
+        && request.resource.data.discountRate >= 0
+        && request.resource.data.discountRate <= 100
+        && request.resource.data.stock is number
+        && request.resource.data.stock >= 0
+        && request.resource.data.image is string
+        && request.resource.data.image.size() > 0
+        && request.resource.data.isRecommended is bool
+        && request.resource.data.createAt == request.time
+        && request.resource.data.updateAt == request.time;
+
+      allow update: if isAdmin()
+        && request.resource.data.keys().hasOnly([
+          'legacyId', 'name', 'nameEn', 'category', 'categoryValue', 'price',
+          'discountRate', 'stock', 'image', 'description', 'isRecommended',
+          'createAt', 'updateAt'
+        ])
+        && request.resource.data.diff(resource.data).changedKeys().hasOnly([
+          'name', 'nameEn', 'category', 'categoryValue', 'price', 'discountRate',
+          'stock', 'image', 'description', 'isRecommended', 'updateAt'
+        ])
+        && request.resource.data.createAt == resource.data.createAt
+        && request.resource.data.name is string
+        && request.resource.data.name.size() > 0
+        && request.resource.data.category is string
+        && request.resource.data.category.size() > 0
+        && request.resource.data.categoryValue is string
+        && request.resource.data.categoryValue.size() > 0
+        && request.resource.data.price is number
+        && request.resource.data.price >= 0
+        && request.resource.data.discountRate is number
+        && request.resource.data.discountRate >= 0
+        && request.resource.data.discountRate <= 100
+        && request.resource.data.stock is number
+        && request.resource.data.stock >= 0
+        && request.resource.data.image is string
+        && request.resource.data.image.size() > 0
+        && request.resource.data.isRecommended is bool
+        && request.resource.data.updateAt == request.time;
+
+      allow delete: if isAdmin();
+    }
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
+
+
+
+
+`
+
+5. 빌드 검사 결과
+- 일반 샌드박스 실행: Vite 내부 프로세스 실행이 spawn EPERM으로 차단됨.
+- 권한 승인 후 npm.cmd run build: 성공.
+- 참고: 번들 크기 500 kB 초과 경고가 표시되었지만 빌드는 완료됨.
+
+[2026-07-29] 5-4 추가 점검: 상품 데이터 구조 및 수정/삭제/추천 버튼 정렬
+
+1. 상품 데이터 구조
+Firestore 컬렉션: products
+문서 id: Firestore 자동 id
+
+필드 구조:
+- legacyId: number | optional
+  - products.json에서 마이그레이션한 기존 id 보존용.
+- name: string
+  - 상품명. 관리자 목록과 사용자 화면에서 가장 우선 표시.
+- nameEn: string
+  - 영문 상품명. 기존 products.json 구조 유지용.
+- category: string
+  - 카테고리 표시명. 예: 글라스 바스켓.
+- categoryValue: string
+  - 카테고리 라우터/필터 값. 예: glass-basket.
+- price: number
+  - 상품 가격.
+- discountRate: number
+  - 할인율. 0 이상 100 이하.
+- stock: number
+  - 재고 수량.
+- image: string
+  - 상품 대표 이미지 경로 또는 URL.
+- description: string
+  - 상품 설명.
+- isRecommended: boolean
+  - 추천상품 여부. 홈 추천상품 표시 기준.
+- createAt: Timestamp
+  - 상품 등록 시 serverTimestamp().
+- updateAt: Timestamp
+  - 상품 등록/수정 시 serverTimestamp().
+
+2. 수정 내용
+- src/firebase/productApi.js
+  - Firestore products가 비어 있거나 일반 화면 조회가 실패할 때 기존 products.json fallback을 사용하도록 보정했다.
+  - 관리자 상품관리는 fallback 없이 Firestore 데이터만 관리한다.
+- src/pages/AdminProducts.jsx
+  - 기존 데이터 표시 후 수정 폼에 값이 채워지도록 유지했다.
+  - 삭제 전 confirm 확인을 유지했다.
+  - 등록/수정/삭제/추천 변경 후 즉시 loadProducts()로 목록을 갱신한다.
+  - 상품 목록에 추천/수정/삭제 버튼을 함께 표시했다.
+  - 한글 성공/오류 메시지를 표시한다.
+- src/pages/Admin.module.scss
+  - 추천/수정/삭제 버튼이 상품 목록 오른쪽에서 정렬되도록 itemActions를 보강했다.
+
+3. 권한 및 보안 규칙
+- 관리자만 상품 등록/수정/삭제 가능하다.
+- 일반 사용자는 products 읽기만 가능하다.
+- Firebase Console에 적용해야 하는 현재 보안 규칙은 아래와 같다.
+
+`ules
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isOwner(uid) {
+      return isSignedIn() && request.auth.uid == uid;
+    }
+
+    function isAdmin() {
+      return isSignedIn()
+        && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
+    }
+
+    function isInitialAdminEmail() {
+      return isSignedIn() && request.auth.token.email == 'admin@a.com';
+    }
+
+    function hasOwner() {
+      return isSignedIn()
+        && (
+          resource.data.userId == request.auth.uid ||
+          resource.data.uid == request.auth.uid
+        );
+    }
+
+    function requestHasOwner() {
+      return isSignedIn()
+        && (
+          request.resource.data.userId == request.auth.uid ||
+          request.resource.data.uid == request.auth.uid
+        );
+    }
+
+    match /users/{uid} {
+      allow create: if isOwner(uid)
+        && request.resource.data.keys().hasOnly(['email', 'nickname', 'role', 'createAt'])
+        && request.resource.data.email == request.auth.token.email
+        && request.resource.data.nickname is string
+        && request.resource.data.nickname.size() > 0
+        && request.resource.data.createAt == request.time
+        && (
+          request.resource.data.role == 'user' ||
+          (isInitialAdminEmail() && request.resource.data.role == 'admin')
+        );
+
+      allow read: if isOwner(uid) || isAdmin();
+
+      allow update: if isOwner(uid)
+        && (
+          (
+            request.resource.data.diff(resource.data).changedKeys().hasOnly(['nickname'])
+            && request.resource.data.nickname is string
+            && request.resource.data.nickname.size() > 0
+            && request.resource.data.email == resource.data.email
+            && request.resource.data.role == resource.data.role
+            && request.resource.data.createAt == resource.data.createAt
+          ) ||
+          (
+            isInitialAdminEmail()
+            && request.resource.data.diff(resource.data).changedKeys().hasOnly(['nickname', 'role'])
+            && request.resource.data.email == resource.data.email
+            && request.resource.data.nickname is string
+            && request.resource.data.nickname.size() > 0
+            && request.resource.data.role == 'admin'
+            && request.resource.data.createAt == resource.data.createAt
+          )
+        );
+
+      allow delete: if false;
+
+      match /{document=**} {
+        allow read, write: if isOwner(uid);
+      }
+    }
+
+    match /orders/{orderId} {
+      allow create: if isSignedIn()
+        && request.resource.data.keys().hasOnly([
+          'userId', 'uid', 'email', 'items', 'subtotal', 'deliveryfree',
+          'totalPrice', 'createAt', 'status'
+        ])
+        && request.resource.data.userId == request.auth.uid
+        && request.resource.data.uid == request.auth.uid
+        && request.resource.data.email == request.auth.token.email
+        && request.resource.data.items is list
+        && request.resource.data.items.size() > 0
+        && request.resource.data.subtotal is number
+        && request.resource.data.deliveryfree is number
+        && request.resource.data.totalPrice is number
+        && request.resource.data.totalPrice >= request.resource.data.subtotal
+        && request.resource.data.createAt == request.time
+        && request.resource.data.status == 'ordered';
+
+      allow read: if hasOwner() || isAdmin();
+
+      allow update, delete: if false;
+    }
+
+    match /carts/{cartId} {
+      allow create: if isSignedIn()
+        && request.resource.data.keys().hasOnly([
+          'userId', 'uid', 'productId', 'productName', 'name', 'title',
+          'price', 'productPrice', 'discountPrice', 'quantity', 'image', 'category', 'createAt'
+        ])
+        && requestHasOwner()
+        && request.resource.data.quantity is number
+        && request.resource.data.quantity > 0;
+
+      allow read: if hasOwner() || isAdmin();
+
+      allow update: if hasOwner()
+        && request.resource.data.diff(resource.data).changedKeys().hasOnly([
+          'productId', 'productName', 'name', 'title', 'price', 'productPrice',
+          'discountPrice', 'quantity', 'image', 'category', 'createAt'
+        ])
+        && request.resource.data.userId == resource.data.userId
+        && request.resource.data.uid == resource.data.uid
+        && request.resource.data.quantity is number
+        && request.resource.data.quantity > 0;
+
+      allow delete: if hasOwner();
+    }
+
+    match /wishlists/{wishlistId} {
+      allow create: if isSignedIn()
+        && request.resource.data.keys().hasOnly([
+          'userId', 'uid', 'productId', 'productName', 'name', 'title',
+          'price', 'productPrice', 'discountPrice', 'image', 'productImage', 'category', 'createAt'
+        ])
+        && requestHasOwner();
+
+      allow read: if hasOwner() || isAdmin();
+
+      allow update: if hasOwner()
+        && request.resource.data.diff(resource.data).changedKeys().hasOnly([
+          'productId', 'productName', 'name', 'title', 'price', 'productPrice',
+          'discountPrice', 'image', 'productImage', 'category', 'createAt'
+        ])
+        && request.resource.data.userId == resource.data.userId
+        && request.resource.data.uid == resource.data.uid;
+
+      allow delete: if hasOwner();
+    }
+    match /products/{productId} {
+      allow read: if true;
+
+      allow create: if isAdmin()
+        && request.resource.data.keys().hasOnly([
+          'legacyId', 'name', 'nameEn', 'category', 'categoryValue', 'price',
+          'discountRate', 'stock', 'image', 'description', 'isRecommended',
+          'createAt', 'updateAt'
+        ])
+        && request.resource.data.name is string
+        && request.resource.data.name.size() > 0
+        && request.resource.data.category is string
+        && request.resource.data.category.size() > 0
+        && request.resource.data.categoryValue is string
+        && request.resource.data.categoryValue.size() > 0
+        && request.resource.data.price is number
+        && request.resource.data.price >= 0
+        && request.resource.data.discountRate is number
+        && request.resource.data.discountRate >= 0
+        && request.resource.data.discountRate <= 100
+        && request.resource.data.stock is number
+        && request.resource.data.stock >= 0
+        && request.resource.data.image is string
+        && request.resource.data.image.size() > 0
+        && request.resource.data.isRecommended is bool
+        && request.resource.data.createAt == request.time
+        && request.resource.data.updateAt == request.time;
+
+      allow update: if isAdmin()
+        && request.resource.data.keys().hasOnly([
+          'legacyId', 'name', 'nameEn', 'category', 'categoryValue', 'price',
+          'discountRate', 'stock', 'image', 'description', 'isRecommended',
+          'createAt', 'updateAt'
+        ])
+        && request.resource.data.diff(resource.data).changedKeys().hasOnly([
+          'name', 'nameEn', 'category', 'categoryValue', 'price', 'discountRate',
+          'stock', 'image', 'description', 'isRecommended', 'updateAt'
+        ])
+        && request.resource.data.createAt == resource.data.createAt
+        && request.resource.data.name is string
+        && request.resource.data.name.size() > 0
+        && request.resource.data.category is string
+        && request.resource.data.category.size() > 0
+        && request.resource.data.categoryValue is string
+        && request.resource.data.categoryValue.size() > 0
+        && request.resource.data.price is number
+        && request.resource.data.price >= 0
+        && request.resource.data.discountRate is number
+        && request.resource.data.discountRate >= 0
+        && request.resource.data.discountRate <= 100
+        && request.resource.data.stock is number
+        && request.resource.data.stock >= 0
+        && request.resource.data.image is string
+        && request.resource.data.image.size() > 0
+        && request.resource.data.isRecommended is bool
+        && request.resource.data.updateAt == request.time;
+
+      allow delete: if isAdmin();
+    }
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
+
+
+
+
+`
+
+4. 테스트 예정
+- npm.cmd run build 실행 예정.
+
+5. 빌드 검사 결과
+- 일반 샌드박스 실행: Vite 내부 프로세스 실행이 spawn EPERM으로 차단됨.
+- 권한 승인 후 npm.cmd run build: 성공.
+- 참고: 번들 크기 500 kB 초과 경고가 표시되었지만 빌드는 완료됨.
+
+[2026-07-29] 관리자 상품관리 목록 미표시 수정
+
+1. 원인
+- Firestore products 컬렉션에는 기존 상품 8개가 이미 존재했다.
+- 마이그레이션 재실행 결과: PRODUCT_MIGRATION_DONE created=0 skipped=8.
+- 관리자 상품관리 목록은 orderBy('createAt', 'desc')로 조회하고 있었는데, 기존 문서 중 createAt이 없거나 정렬 필드가 누락된 문서는 orderBy 조회에서 제외될 수 있다.
+- 그래서 Firestore에 상품이 있어도 /admin/products 목록이 비어 보일 수 있었다.
+
+2. 수정 파일 및 이유
+- scripts/migrateProductsToFirestore.mjs
+  - 마이그레이션 진행 상태를 확인할 수 있도록 로그를 추가하고 정상 종료되도록 보정했다.
+- src/firebase/productApi.js
+  - products 조회에서 Firestore orderBy를 제거하고 전체 문서를 가져온 뒤 클라이언트에서 createAt 기준 정렬하도록 수정했다.
+  - createAt이 없는 기존 상품 문서도 관리자 목록에 표시되도록 했다.
+
+3. 보안 규칙
+- 이번 수정은 조회 방식 보정이라 firestore.rules 변경 없음.
+- 기존 products 규칙 유지: 상품 읽기는 허용, 등록/수정/삭제는 isAdmin()만 허용.
+
+4. 빌드 검사 결과
+- 일반 샌드박스 실행: Vite 내부 프로세스 실행이 spawn EPERM으로 차단됨.
+- 권한 승인 후 npm.cmd run build: 성공.
+- 참고: 번들 크기 500 kB 초과 경고가 표시되었지만 빌드는 완료됨.
+
+[2026-07-29] 관리자 상품관리 query 오류 및 상품 목록 미표시 수정
+
+1. 원인
+- src/firebase/productApi.js에서 query/orderBy를 사용하는 코드가 남아 있었지만 import가 제거되어 query is not defined 오류가 발생했다.
+- 이 오류 때문에 /admin/products의 상품 조회가 실패하고 등록된 상품이 없다는 안내가 표시되었다.
+- 또한 관리자 상품관리는 fallbackToJson:false로 Firestore 상품만 표시하고 있어서, Firestore 조회가 실패하거나 비어 있으면 기존 products.json 상품도 보이지 않았다.
+
+2. 수정 파일 및 이유
+- src/firebase/productApi.js
+  - query/orderBy 사용을 완전히 제거하고 getDocs(collection(db, 'products')) 방식으로 조회하도록 수정했다.
+  - createAt이 없는 상품도 표시되도록 클라이언트에서 정렬하도록 수정했다.
+  - Firestore 조회 실패 또는 products 비어 있음 상황에서 기존 products.json을 fallback 목록으로 반환하도록 보정했다.
+- src/pages/AdminProducts.jsx
+  - 관리자 상품관리도 getProducts() 기본 fallback을 사용해 기존 products.json 상품을 목록으로 출력하도록 수정했다.
+  - Firestore 상품은 추천/수정/삭제 버튼을 표시하고, JSON fallback 상품은 JSON 상품 표시를 보여주도록 구분했다.
+- src/pages/Admin.module.scss
+  - JSON 상품 표시 배지 스타일을 추가했다.
+
+3. 결과
+- query is not defined 오류 제거.
+- Firestore 마이그레이션이 완료되지 않았거나 Firestore 조회가 비어도 관리자 상품관리에서 기존 products.json 상품 목록이 출력된다.
+- 단, JSON fallback 상품은 Firestore 문서가 아니므로 수정/삭제 대상이 아니다. 수정/삭제는 Firestore products 문서에 대해서만 가능하다.
+
+4. 보안 규칙
+- 이번 수정은 조회 fallback 및 오류 수정이라 firestore.rules 변경 없음.
+- 기존 products 규칙 유지: 읽기는 공개, 등록/수정/삭제는 isAdmin()만 가능.
+
+5. 빌드 검사 결과
+- 일반 샌드박스 실행: Vite 내부 프로세스 실행이 spawn EPERM으로 차단됨.
+- 권한 승인 후 npm.cmd run build: 성공.
+- 참고: 번들 크기 500 kB 초과 경고가 표시되었지만 빌드는 완료됨.
+
+[2026-07-29] 관리자 페이지 상품 재고 관리 구현
+
+1. 수정한 파일과 이유
+- src/pages/AdminProducts.jsx
+  - 관리자 상품관리 화면에서 현재 재고를 표시하고, 재고 수량을 직접 수정하면 Firestore products 문서에 즉시 저장되도록 수정.
+  - 재고 0개는 품절, 5개 이하는 재고 부족, 그 외는 판매중으로 표시.
+  - 재고 입력은 0 이상의 정수만 허용하고 한글 오류 메시지를 표시.
+
+- src/pages/Admin.module.scss
+  - 관리자 상품 목록에 재고 입력 칸과 재고 상태 배지가 자연스럽게 보이도록 기존 SCSS Module 구조 안에서 스타일 추가.
+
+- src/components/ProductCard.jsx
+  - 상품 목록 카드에서 재고와 품절 상태를 표시.
+  - 품절 상품은 장바구니 담기 버튼을 비활성화하고 클릭 시 장바구니 추가를 차단.
+
+- src/components/ProductCard.module.scss
+  - 상품 카드의 품절 배지, 재고 문구, 비활성 버튼 스타일 추가.
+
+- src/pages/ProductDetail.jsx
+  - 상품 상세 페이지에서 재고가 0이면 수량 선택을 표시하지 않고 품절로 표시.
+  - 품절 상품은 장바구니 담기와 바로 구매 버튼을 비활성화.
+  - 장바구니 추가 함수에서도 품절 상품 추가를 차단.
+
+- src/pages/ProductDetail.module.scss
+  - 상품 상세의 품절 문구와 비활성 버튼 스타일 추가.
+
+- firestore.rules
+  - 기존 users, orders, carts, wishlists, products 권한 구조는 유지.
+  - products 재고 필드를 0 이상의 정수만 허용하도록 수정.
+
+2. Firestore 보안규칙 products 수정 코드
+```rules
+match /products/{productId} {
+  allow read: if true;
+
+  allow create: if isAdmin()
+    && request.resource.data.keys().hasOnly([
+      'legacyId', 'name', 'nameEn', 'category', 'categoryValue', 'price',
+      'discountRate', 'stock', 'image', 'description', 'isRecommended',
+      'createAt', 'updateAt'
+    ])
+    && request.resource.data.name is string
+    && request.resource.data.name.size() > 0
+    && request.resource.data.category is string
+    && request.resource.data.category.size() > 0
+    && request.resource.data.categoryValue is string
+    && request.resource.data.categoryValue.size() > 0
+    && request.resource.data.price is number
+    && request.resource.data.price >= 0
+    && request.resource.data.discountRate is number
+    && request.resource.data.discountRate >= 0
+    && request.resource.data.discountRate <= 100
+    && request.resource.data.stock is int
+    && request.resource.data.stock >= 0
+    && request.resource.data.image is string
+    && request.resource.data.image.size() > 0
+    && request.resource.data.isRecommended is bool
+    && request.resource.data.createAt == request.time
+    && request.resource.data.updateAt == request.time;
+
+  allow update: if isAdmin()
+    && request.resource.data.keys().hasOnly([
+      'legacyId', 'name', 'nameEn', 'category', 'categoryValue', 'price',
+      'discountRate', 'stock', 'image', 'description', 'isRecommended',
+      'createAt', 'updateAt'
+    ])
+    && request.resource.data.diff(resource.data).changedKeys().hasOnly([
+      'name', 'nameEn', 'category', 'categoryValue', 'price', 'discountRate',
+      'stock', 'image', 'description', 'isRecommended', 'updateAt'
+    ])
+    && request.resource.data.createAt == resource.data.createAt
+    && request.resource.data.name is string
+    && request.resource.data.name.size() > 0
+    && request.resource.data.category is string
+    && request.resource.data.category.size() > 0
+    && request.resource.data.categoryValue is string
+    && request.resource.data.categoryValue.size() > 0
+    && request.resource.data.price is number
+    && request.resource.data.price >= 0
+    && request.resource.data.discountRate is number
+    && request.resource.data.discountRate >= 0
+    && request.resource.data.discountRate <= 100
+    && request.resource.data.stock is int
+    && request.resource.data.stock >= 0
+    && request.resource.data.image is string
+    && request.resource.data.image.size() > 0
+    && request.resource.data.isRecommended is bool
+    && request.resource.data.updateAt == request.time;
+
+  allow delete: if isAdmin();
+}
+```
+
+3. 빌드 검사
+- npm.cmd run build 성공.
+- 일반 샌드박스 실행은 spawn EPERM으로 실패했으나, 권한 승인 실행에서 Vite production build 성공.
+
+4. 주의 사항
+- 변경된 firestore.rules 내용은 Firebase Console의 Firestore Rules에 직접 게시해야 실제 프로젝트에 적용됨.
+- 재고 부족 기준은 현재 LOW_STOCK_LIMIT = 5로 설정.
+
+[2026-07-29] 관리자 재고 입력 검증 보강
+- src/pages/AdminProducts.jsx
+  - 빈 문자열이 Number 변환으로 0 처리되지 않도록 재고 검증을 정수 문자열 기준으로 보강.
+  - 음수, 소수, 빈 입력은 Firestore 저장 전에 차단하고 한글 오류 메시지를 표시.
+
+[2026-07-29] 관리자 재고 관리 최종 빌드 확인
+- npm.cmd run build 성공.
+- Vite 빌드 경고: 번들 청크가 500kB를 초과한다는 경고가 있으나 이번 재고 기능 문법/컴파일 오류는 없음.
+
+[2026-07-29] 주문 완료 시 상품 재고 차감 기능 추가
+
+1. 수정한 파일과 이유
+- src/firebase/orderApi.js
+  - 주문 생성 시 Firestore runTransaction을 사용하도록 변경.
+  - 상품별 현재 재고를 확인한 뒤 주문 수량만큼 재고를 차감.
+  - 재고 부족, 상품 문서 없음, 잘못된 수량이면 주문 생성을 중단하여 재고가 차감되지 않도록 처리.
+  - 같은 상품이 주문 배열에 중복 포함되어도 productId 기준으로 수량을 합산해 한 번만 재고 차감.
+
+- src/firebase/productApi.js
+  - 상품 목록/상세 화면에서 Firestore 재고 변경을 즉시 받을 수 있도록 subscribeProducts, subscribeProductById 실시간 구독 함수 추가.
+  - 기존 getProducts, getProductById, 상품 등록/수정/삭제 기능 유지.
+
+- src/pages/Products.jsx
+  - 상품 목록을 1회 조회에서 Firestore 실시간 구독 방식으로 변경.
+  - 주문 완료 후 products.stock 변경이 목록 화면에 즉시 반영되도록 처리.
+
+- src/pages/ProductDetail.jsx
+  - 상품 상세를 1회 조회에서 Firestore 실시간 구독 방식으로 변경.
+  - 주문 완료 후 products.stock 변경이 상세 화면의 재고/품절 상태에 즉시 반영되도록 처리.
+
+- firestore.rules
+  - 기존 관리자 상품 등록/수정/삭제 권한 유지.
+  - 로그인 사용자는 상품 주문 흐름에서 stock 감소와 updateAt 변경만 가능하도록 추가.
+  - stock 증가, 음수 재고, 다른 상품 필드 변경은 사용자 권한으로 불가.
+
+2. Firestore 보안규칙 products update 핵심 추가 코드
+```rules
+allow update: if (
+    isAdmin()
+    && request.resource.data.keys().hasOnly([
+      'legacyId', 'name', 'nameEn', 'category', 'categoryValue', 'price',
+      'discountRate', 'stock', 'image', 'description', 'isRecommended',
+      'createAt', 'updateAt'
+    ])
+    && request.resource.data.diff(resource.data).changedKeys().hasOnly([
+      'name', 'nameEn', 'category', 'categoryValue', 'price', 'discountRate',
+      'stock', 'image', 'description', 'isRecommended', 'updateAt'
+    ])
+    && request.resource.data.stock is int
+    && request.resource.data.stock >= 0
+    && request.resource.data.updateAt == request.time
+  ) || (
+    isSignedIn()
+    && request.resource.data.keys() == resource.data.keys()
+    && request.resource.data.diff(resource.data).changedKeys().hasOnly(['stock', 'updateAt'])
+    && request.resource.data.stock is int
+    && request.resource.data.stock >= 0
+    && request.resource.data.stock < resource.data.stock
+    && request.resource.data.updateAt == request.time
+  );
+```
+
+3. 빌드 검사
+- npm.cmd run build 성공.
+- Vite 번들 크기 경고는 있으나 이번 주문/재고 기능 컴파일 오류 없음.
+
+4. 주의 사항
+- firestore.rules는 Firebase Console에서 직접 게시해야 실제 프로젝트에 적용됨.
+- 현재 구현은 클라이언트 transaction 기반이므로 주문 생성과 재고 차감은 함께 성공/실패 처리됨.
+
+[2026-07-29] 관리자 재고 0 입력 검증 오류 수정
+- src/pages/AdminProducts.jsx
+  - 재고 검증 정규식이 숫자를 뜻하는 \d가 아니라 문자 그대로의 \\d로 처리되어 0 포함 모든 숫자가 막히던 문제 수정.
+  - 0은 정상 재고로 허용하고, 음수/소수/빈 값은 계속 차단.
+- 확인 결과
+  - 0: 허용
+  - 5: 허용
+  - -1: 차단
+  - 1.5: 차단
+  - 빈 값: 차단
+- npm.cmd run build 성공.
+
+============================================================
+5-5단계 관리자 페이지 추천 상품 관리 (2026-07-29)
+============================================================
+
+[작업 내용]
+- Firestore products 문서의 isRecommended 필드를 추천 상품 기준으로 계속 사용한다.
+- 상품 등록, 상품 수정, 추천 버튼에서 추천 지정 전 현재 추천 상품 수를 조회한다.
+- 이미 추천 상품이 4개이면 저장하지 않고 "추천 상품은 최대 4개까지 설정할 수 있습니다."를 표시한다.
+- 이미 추천된 상품의 일반 정보/재고 수정과 추천 해제는 정상 처리한다.
+- 홈 추천상품은 isRecommended == true인 상품만 최대 4개까지 실시간 표시한다.
+- 관리자 추천상품관리 메뉴는 /admin/products#recommended로 연결한다.
+- 기존 /admin/recommended 접근은 /admin/products#recommended로 이동한다.
+
+[수정 파일과 이유]
+- src/firebase/productApi.js
+  - 추천 지정 전 Firestore의 isRecommended == true 문서를 조회해 최대 4개 제한을 공통 적용했다.
+  - 상품 등록/수정 API를 사용하는 모든 관리자 동작에 같은 제한이 적용된다.
+- src/pages/Home.jsx
+  - Firestore 상품 실시간 구독을 사용하고 isRecommended 상품만 최대 4개 표시하도록 수정했다.
+- src/pages/AdminProducts.jsx
+  - 현재 Firestore 추천 상품 개수를 0/4 형식으로 표시했다.
+- src/components/AdminLayout.jsx
+  - 추천상품관리 메뉴를 상품관리 화면의 추천 영역으로 연결하고 동일 경로 메뉴의 활성 상태를 구분했다.
+- src/App.jsx
+  - /admin/recommended 안내 화면을 제거하고 /admin/products#recommended 이동으로 교체했다.
+- historyCode.txt
+  - 5-5단계 작업 내용, 수정 이유, 테스트 결과와 적용 보안 규칙을 기록했다.
+
+[Firestore 보안 규칙 확인]
+- 이번 단계에서 컬렉션 구조는 변경하지 않았다.
+- 기존 products 규칙이 읽기는 전체 허용하고, 생성/전체 수정/삭제는 users/{uid}.role == admin인 관리자만 허용한다.
+- 아래 규칙을 포함한 프로젝트의 전체 firestore.rules를 Firebase Console > Firestore Database > 규칙에 게시해야 한다.
+- Firestore Rules는 products 컬렉션 전체에서 isRecommended == true인 문서 개수를 집계할 수 없으므로 최대 4개 검사는 productApi.js에서 수행한다.
+
+보안 규칙 핵심 코드:
+match /products/{productId} {
+  allow read: if true;
+  allow create: if isAdmin()
+    && request.resource.data.isRecommended is bool;
+  allow update: if (
+    isAdmin()
+    && request.resource.data.isRecommended is bool
+  ) || (
+    isSignedIn()
+    && request.resource.data.keys() == resource.data.keys()
+    && request.resource.data.diff(resource.data).changedKeys().hasOnly(['stock', 'updateAt'])
+    && request.resource.data.stock is int
+    && request.resource.data.stock >= 0
+    && request.resource.data.stock < resource.data.stock
+    && request.resource.data.updateAt == request.time
+  );
+  allow delete: if isAdmin();
+}
+
+주의: 위 코드는 이번 기능과 관련된 핵심 조건 요약이다. 실제 게시에는 firestore.rules 파일의 전체 규칙을 사용한다.
+
+[테스트 방법]
+1. 관리자 계정으로 /admin/products 접속 후 추천 상품을 4개까지 지정한다.
+2. 다섯 번째 상품에서 추천 버튼을 누르면 최대 4개 한글 오류가 표시되고 Firestore 값이 변경되지 않는지 확인한다.
+3. 추천 상품 하나를 해제한 뒤 다른 상품을 추천하면 정상 저장되는지 확인한다.
+4. 추천 체크 상태로 새 상품 등록 또는 기존 상품 수정을 시도해도 동일한 4개 제한이 적용되는지 확인한다.
+5. 홈에서 추천 상품만 표시되고 관리자 변경 직후 목록이 갱신되는지 확인한다.
+6. 일반 사용자 계정에서 Firestore products 문서의 isRecommended 변경이 permission-denied로 차단되는지 확인한다.
+
+[빌드 검사]
+- npm.cmd run build 성공.
+- Vite 8.1.4, 114개 모듈 변환 완료.
+- 번들 크기 경고만 있으며 빌드 오류는 없다.
+
+============================================================
+관리자 상품 목록 상단 배치 조정 (2026-07-29)
+============================================================
+
+[수정 파일과 이유]
+- src/pages/AdminProducts.jsx
+  - 관리자 상품관리 화면에서 상품 목록이 등록/수정 폼보다 먼저 표시되도록 JSX 순서를 변경했다.
+  - 추천 개수, 성공/오류 메시지, 상품 목록을 상단에 유지하고 등록/수정 폼을 목록 아래로 이동했다.
+  - 기존 추천, 재고 수정, 상품 수정/삭제 기능 코드는 변경하지 않았다.
+- src/pages/Admin.module.scss
+  - 폼이 목록 아래로 이동함에 따라 기존 아래쪽 여백을 위쪽 여백으로 변경해 목록과 폼 사이 간격을 유지했다.
+- historyCode.txt
+  - 배치 변경 이유와 빌드 결과를 기록했다.
+
+[Firebase 및 보안 규칙]
+- 화면 배치만 변경했으며 Firebase 데이터 처리와 firestore.rules는 변경하지 않았다.
+
+[빌드 검사]
+- npm.cmd run build 성공.
+- 114개 모듈 변환 완료, 빌드 오류 없음.
+- 기존 번들 크기 경고만 남아 있다.
+
+============================================================
+5-6단계 관리자 페이지 공지사항 작성·수정·삭제 (2026-07-29)
+============================================================
+
+[Firestore 데이터 구조]
+컬렉션: notices
+문서 ID: Firestore 자동 ID
+- title: string, 공지 제목
+- content: string, 공지 내용
+- authorUid: string, 작성한 관리자 Firebase uid
+- createAt: Timestamp, 최초 작성 서버 시간
+- updatedAt: Timestamp, 마지막 수정 서버 시간
+
+[구현 내용]
+- 누구나 /notice에서 공지사항을 최신 작성순으로 조회할 수 있다.
+- 누구나 /notice/{공지ID}에서 공지 상세 내용을 조회할 수 있다.
+- 관리자만 /admin/notices에 접근해 공지를 작성, 수정, 삭제할 수 있다.
+- 관리자 공지 목록에서 수정 버튼을 누르면 기존 제목과 내용이 폼에 표시된다.
+- 수정 시 authorUid와 createAt은 유지하고 updatedAt만 serverTimestamp()로 갱신한다.
+- 삭제 전 window.confirm으로 삭제 여부를 확인한다.
+- 작성, 수정, 삭제 완료 후 Firestore 목록을 다시 조회해 관리자 목록을 즉시 갱신한다.
+- Firebase 오류는 공지 영역 안에 한글 메시지로 표시한다.
+- /admin/notices는 기존 AdminRoute 안에 있어 로그인 및 role=admin 확인 후에만 렌더링된다.
+
+[생성한 파일과 이유]
+- src/firebase/noticeApi.js
+  - notices 최신순 목록 조회, 상세 조회, 작성, 수정, 삭제 Firestore 모듈 API를 구현했다.
+- src/pages/AdminNotices.jsx
+  - 관리자 공지 목록과 작성·수정·삭제 화면이 새로 필요해 생성했다.
+
+[수정한 파일과 이유]
+- src/pages/Notice.jsx
+  - 비어 있던 기존 공지 페이지를 공개 최신순 목록 화면으로 연결했다.
+- src/pages/Notice.module.scss
+  - 기존 SCSS Module 구조를 유지해 공지 목록과 모바일 스타일을 작성했다.
+- src/pages/NoticeDetail.jsx
+  - 비어 있던 기존 상세 페이지를 notices/{id} 상세 조회 화면으로 연결했다.
+- src/pages/NoticeDetail.module.scss
+  - 공지 상세 본문, 상태, 목록 버튼과 모바일 스타일을 작성했다.
+- src/pages/Admin.module.scss
+  - 기존 관리자 디자인을 유지하는 공지 목록 및 작성 폼 스타일을 추가했다.
+- src/App.jsx
+  - /admin/notices placeholder를 AdminNotices로 교체했다.
+  - 공개 /notice와 /notice/:id 기존 Router 구조는 유지했다.
+- firestore.rules
+  - notices는 누구나 읽고 관리자만 작성·수정·삭제하도록 검증 규칙을 추가했다.
+- historyCode.txt
+  - 작업 단계, 데이터 구조, 수정 이유, 보안 규칙과 검사 결과를 기록했다.
+
+[추가한 Firestore 보안 규칙]
+아래 규칙이 포함된 firestore.rules 전체 내용을 Firebase Console > Firestore Database > 규칙에 직접 붙여넣고 게시해야 한다.
+
+match /notices/{noticeId} {
+  allow read: if true;
+
+  allow create: if isAdmin()
+    && request.resource.data.keys().hasOnly([
+      'title', 'content', 'authorUid', 'createAt', 'updatedAt'
+    ])
+    && request.resource.data.title is string
+    && request.resource.data.title.size() > 0
+    && request.resource.data.title.size() <= 120
+    && request.resource.data.content is string
+    && request.resource.data.content.size() > 0
+    && request.resource.data.authorUid == request.auth.uid
+    && request.resource.data.createAt == request.time
+    && request.resource.data.updatedAt == request.time;
+
+  allow update: if isAdmin()
+    && request.resource.data.keys().hasOnly([
+      'title', 'content', 'authorUid', 'createAt', 'updatedAt'
+    ])
+    && request.resource.data.diff(resource.data).changedKeys().hasOnly([
+      'title', 'content', 'updatedAt'
+    ])
+    && request.resource.data.title is string
+    && request.resource.data.title.size() > 0
+    && request.resource.data.title.size() <= 120
+    && request.resource.data.content is string
+    && request.resource.data.content.size() > 0
+    && request.resource.data.authorUid == resource.data.authorUid
+    && request.resource.data.createAt == resource.data.createAt
+    && request.resource.data.updatedAt == request.time;
+
+  allow delete: if isAdmin();
+}
+
+[보안 규칙 테스트]
+1. 비로그인 상태에서 notices 목록과 상세 읽기 성공 확인.
+2. 비로그인 및 일반 사용자 상태에서 notices create/update/delete가 permission-denied인지 확인.
+3. users/{관리자uid}.role == admin인 계정에서 공지 작성·수정·삭제 성공 확인.
+4. 관리자라도 authorUid를 다른 uid로 작성하거나 수정 시도하면 차단되는지 확인.
+5. 수정할 때 createAt 또는 authorUid 변경을 시도하면 차단되는지 확인.
+
+[검사 결과]
+- npm.cmd run build 성공: Vite 8.1.4, 115개 모듈 변환 완료.
+- 빌드 오류 없음. 기존 번들 크기 경고만 존재한다.
+- npm.cmd run lint 완료.
+- 새 공지 기능 관련 lint 오류/경고 없음.
+- 기존 authStore.js, Footer.jsx, MyPage.jsx 경고 3개는 이번 범위와 무관해 유지했다.
+
+============================================================
+5-7단계 기존 Firestore 보안 규칙 보완 (2026-07-29)
+============================================================
+
+[수정 파일과 이유]
+- firestore.rules
+  - 기존 users, orders, carts, wishlists, products, notices 규칙을 유지하면서 관리자와 소유자 권한을 명확히 보완했다.
+  - isAdmin()에서 관리자 사용자 문서 존재 여부를 먼저 확인하도록 보강했다.
+  - users 단건 조회(get)는 본인 또는 관리자, 전체 조회(list)는 관리자만 허용하도록 분리했다.
+  - 회원가입 문서 role은 user만 허용하고 사용자는 nickname 외 필드를 변경할 수 없도록 해 role 자기 변경을 차단했다.
+  - 상품 정보와 isRecommended 변경, 상품 생성/삭제는 관리자만 가능하다.
+  - 기존 주문 완료 기능을 유지하기 위해 로그인 사용자는 stock 감소와 updateAt 변경만 가능한 제한 예외를 유지했다.
+  - 공지는 누구나 읽고 관리자만 작성/수정/삭제할 수 있다.
+  - 일반 사용자는 cart, wishlist, order에서 본인 소유 문서만 접근할 수 있고 기존 관리자 조회 권한은 유지했다.
+- historyCode.txt
+  - 변경 이유, 검사 결과와 Firebase Console에 적용할 전체 보안 규칙을 기록했다.
+
+[주의 사항]
+- 관리자 지정과 role 변경은 Firebase Console 또는 Admin SDK 관리자 스크립트에서만 수행한다.
+- Firestore 클라이언트 규칙에서는 사용자의 role 변경이 허용되지 않는다.
+- 아래 전체 규칙을 Firebase Console > Firestore Database > 규칙에 붙여넣고 게시해야 실제 프로젝트에 적용된다.
+- React 빌드는 Firestore Rules 문법을 검사하지 않는다. Firebase Console 게시 단계의 규칙 검사를 반드시 통과해야 한다.
+
+[빌드 검사]
+- npm.cmd run build 성공.
+- Vite 8.1.4, 115개 모듈 변환 완료.
+- 빌드 오류 없음. 기존 번들 크기 경고만 존재한다.
+
+[Firebase Console 적용용 전체 firestore.rules]
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isOwner(uid) {
+      return isSignedIn() && request.auth.uid == uid;
+    }
+
+    function isAdmin() {
+      return isSignedIn()
+        && exists(/databases/$(database)/documents/users/$(request.auth.uid))
+        && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
+    }
+
+    function isInitialAdminEmail() {
+      return isSignedIn() && request.auth.token.email == 'admin@a.com';
+    }
+
+    function hasOwner() {
+      return isSignedIn()
+        && (
+          resource.data.userId == request.auth.uid ||
+          resource.data.uid == request.auth.uid
+        );
+    }
+
+    function requestHasOwner() {
+      return isSignedIn()
+        && (
+          request.resource.data.userId == request.auth.uid ||
+          request.resource.data.uid == request.auth.uid
+        );
+    }
+
+    match /users/{uid} {
+      allow create: if isOwner(uid)
+        && request.resource.data.keys().hasOnly(['email', 'nickname', 'role', 'createAt'])
+        && request.resource.data.email == request.auth.token.email
+        && request.resource.data.nickname is string
+        && request.resource.data.nickname.size() > 0
+        && request.resource.data.role == 'user'
+        && request.resource.data.createAt == request.time;
+
+      allow get: if isOwner(uid) || isAdmin();
+      allow list: if isAdmin();
+
+      allow update: if isOwner(uid)
+        && request.resource.data.diff(resource.data).changedKeys().hasOnly(['nickname'])
+        && request.resource.data.nickname is string
+        && request.resource.data.nickname.size() > 0
+        && request.resource.data.email == resource.data.email
+        && request.resource.data.role == resource.data.role
+        && request.resource.data.createAt == resource.data.createAt;
+
+      allow delete: if false;
+
+      match /{document=**} {
+        allow read, write: if isOwner(uid);
+      }
+    }
+
+    match /orders/{orderId} {
+      allow create: if isSignedIn()
+        && request.resource.data.keys().hasOnly([
+          'userId', 'uid', 'email', 'items', 'subtotal', 'deliveryfree',
+          'totalPrice', 'createAt', 'status'
+        ])
+        && request.resource.data.userId == request.auth.uid
+        && request.resource.data.uid == request.auth.uid
+        && request.resource.data.email == request.auth.token.email
+        && request.resource.data.items is list
+        && request.resource.data.items.size() > 0
+        && request.resource.data.subtotal is number
+        && request.resource.data.deliveryfree is number
+        && request.resource.data.totalPrice is number
+        && request.resource.data.totalPrice >= request.resource.data.subtotal
+        && request.resource.data.createAt == request.time
+        && request.resource.data.status == 'ordered';
+
+      allow read: if hasOwner() || isAdmin();
+
+      allow update, delete: if false;
+    }
+
+    match /carts/{cartId} {
+      allow create: if isSignedIn()
+        && request.resource.data.keys().hasOnly([
+          'userId', 'uid', 'productId', 'productName', 'name', 'title',
+          'price', 'productPrice', 'discountPrice', 'quantity', 'image', 'category', 'createAt'
+        ])
+        && requestHasOwner()
+        && request.resource.data.quantity is number
+        && request.resource.data.quantity > 0;
+
+      allow read: if hasOwner() || isAdmin();
+
+      allow update: if hasOwner()
+        && request.resource.data.diff(resource.data).changedKeys().hasOnly([
+          'productId', 'productName', 'name', 'title', 'price', 'productPrice',
+          'discountPrice', 'quantity', 'image', 'category', 'createAt'
+        ])
+        && request.resource.data.userId == resource.data.userId
+        && request.resource.data.uid == resource.data.uid
+        && request.resource.data.quantity is number
+        && request.resource.data.quantity > 0;
+
+      allow delete: if hasOwner();
+    }
+
+    match /wishlists/{wishlistId} {
+      allow create: if isSignedIn()
+        && request.resource.data.keys().hasOnly([
+          'userId', 'uid', 'productId', 'productName', 'name', 'title',
+          'price', 'productPrice', 'discountPrice', 'image', 'productImage', 'category', 'createAt'
+        ])
+        && requestHasOwner();
+
+      allow read: if hasOwner() || isAdmin();
+
+      allow update: if hasOwner()
+        && request.resource.data.diff(resource.data).changedKeys().hasOnly([
+          'productId', 'productName', 'name', 'title', 'price', 'productPrice',
+          'discountPrice', 'image', 'productImage', 'category', 'createAt'
+        ])
+        && request.resource.data.userId == resource.data.userId
+        && request.resource.data.uid == resource.data.uid;
+
+      allow delete: if hasOwner();
+    }
+
+    match /notices/{noticeId} {
+      allow read: if true;
+
+      allow create: if isAdmin()
+        && request.resource.data.keys().hasOnly([
+          'title', 'content', 'authorUid', 'createAt', 'updatedAt'
+        ])
+        && request.resource.data.title is string
+        && request.resource.data.title.size() > 0
+        && request.resource.data.title.size() <= 120
+        && request.resource.data.content is string
+        && request.resource.data.content.size() > 0
+        && request.resource.data.authorUid == request.auth.uid
+        && request.resource.data.createAt == request.time
+        && request.resource.data.updatedAt == request.time;
+
+      allow update: if isAdmin()
+        && request.resource.data.keys().hasOnly([
+          'title', 'content', 'authorUid', 'createAt', 'updatedAt'
+        ])
+        && request.resource.data.diff(resource.data).changedKeys().hasOnly([
+          'title', 'content', 'updatedAt'
+        ])
+        && request.resource.data.title is string
+        && request.resource.data.title.size() > 0
+        && request.resource.data.title.size() <= 120
+        && request.resource.data.content is string
+        && request.resource.data.content.size() > 0
+        && request.resource.data.authorUid == resource.data.authorUid
+        && request.resource.data.createAt == resource.data.createAt
+        && request.resource.data.updatedAt == request.time;
+
+      allow delete: if isAdmin();
+    }
+    match /products/{productId} {
+      allow read: if true;
+
+      allow create: if isAdmin()
+        && request.resource.data.keys().hasOnly([
+          'legacyId', 'name', 'nameEn', 'category', 'categoryValue', 'price',
+          'discountRate', 'stock', 'image', 'description', 'isRecommended',
+          'createAt', 'updateAt'
+        ])
+        && request.resource.data.name is string
+        && request.resource.data.name.size() > 0
+        && request.resource.data.category is string
+        && request.resource.data.category.size() > 0
+        && request.resource.data.categoryValue is string
+        && request.resource.data.categoryValue.size() > 0
+        && request.resource.data.price is number
+        && request.resource.data.price >= 0
+        && request.resource.data.discountRate is number
+        && request.resource.data.discountRate >= 0
+        && request.resource.data.discountRate <= 100
+        && request.resource.data.stock is int
+        && request.resource.data.stock >= 0
+        && request.resource.data.image is string
+        && request.resource.data.image.size() > 0
+        && request.resource.data.isRecommended is bool
+        && request.resource.data.createAt == request.time
+        && request.resource.data.updateAt == request.time;
+
+      allow update: if (
+          isAdmin()
+          && request.resource.data.keys().hasOnly([
+            'legacyId', 'name', 'nameEn', 'category', 'categoryValue', 'price',
+            'discountRate', 'stock', 'image', 'description', 'isRecommended',
+            'createAt', 'updateAt'
+          ])
+          && request.resource.data.diff(resource.data).changedKeys().hasOnly([
+            'name', 'nameEn', 'category', 'categoryValue', 'price', 'discountRate',
+            'stock', 'image', 'description', 'isRecommended', 'updateAt'
+          ])
+          && request.resource.data.createAt == resource.data.createAt
+          && request.resource.data.name is string
+          && request.resource.data.name.size() > 0
+          && request.resource.data.category is string
+          && request.resource.data.category.size() > 0
+          && request.resource.data.categoryValue is string
+          && request.resource.data.categoryValue.size() > 0
+          && request.resource.data.price is number
+          && request.resource.data.price >= 0
+          && request.resource.data.discountRate is number
+          && request.resource.data.discountRate >= 0
+          && request.resource.data.discountRate <= 100
+          && request.resource.data.stock is int
+          && request.resource.data.stock >= 0
+          && request.resource.data.image is string
+          && request.resource.data.image.size() > 0
+          && request.resource.data.isRecommended is bool
+          && request.resource.data.updateAt == request.time
+        ) || (
+          // 기존 주문 완료 트랜잭션용 예외: 상품 정보는 바꿀 수 없고 재고 감소만 허용한다.
+          isSignedIn()
+          && request.resource.data.keys() == resource.data.keys()
+          && request.resource.data.diff(resource.data).changedKeys().hasOnly(['stock', 'updateAt'])
+          && request.resource.data.stock is int
+          && request.resource.data.stock >= 0
+          && request.resource.data.stock < resource.data.stock
+          && request.resource.data.updateAt == request.time
+        );
+
+      allow delete: if isAdmin();
+    }
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
+
+
+
+
+
+
+
+
+
+
+============================================================
+관리자 상품·추천 관리 분리 및 상품 마이그레이션 보완 (2026-07-29)
+============================================================
+
+[문제 원인]
+- 추천상품관리 메뉴가 /admin/products#recommended로 연결되어 상품관리와 같은 AdminProducts 화면을 사용하고 있었다.
+- 기존 scripts/migrateProductsToFirestore.mjs는 터미널 환경변수와 관리자 로그인이 필요해 관리자 화면에서 실행할 수 없었다.
+
+[구현 결과]
+- /admin/products는 상품 목록, 재고, 등록, 수정, 삭제와 JSON 마이그레이션만 담당한다.
+- /admin/recommended는 별도 AdminRecommended 화면에서 추천 지정과 해제만 담당한다.
+- 추천 상품은 isRecommended 기준이며 최대 4개 제한을 기존 productApi 검사로 유지한다.
+- products.json 마이그레이션은 현재 로그인한 관리자 권한으로 Firestore batch 쓰기를 실행한다.
+- legacyId가 같은 기존 Firestore 상품은 건너뛰므로 반복 실행해도 중복 생성하지 않는다.
+- 마이그레이션 상품은 Firestore 자동 ID, legacyId, stock, description, isRecommended, createAt, updateAt 구조를 사용한다.
+- 기존 터미널 마이그레이션 스크립트는 삭제하지 않고 유지했다.
+
+[생성한 파일과 이유]
+- src/pages/AdminRecommended.jsx
+  - 상품관리와 분리된 추천상품관리 전용 페이지가 필요해 생성했다.
+
+[수정한 파일과 이유]
+- src/firebase/productApi.js
+  - products.json을 읽어 중복 legacyId를 제외하고 Firestore에 batch 생성하는 migrateJsonProducts를 추가했다.
+- src/pages/AdminProducts.jsx
+  - 추천 제어를 제거하고 상품·재고 관리와 관리자 마이그레이션 버튼만 남겼다.
+- src/components/AdminLayout.jsx
+  - 추천상품관리 메뉴를 별도 /admin/recommended 경로로 연결했다.
+- src/App.jsx
+  - /admin/recommended를 AdminRecommended 컴포넌트로 연결했다.
+- src/pages/Admin.module.scss
+  - 마이그레이션 도구막대와 추천 상태·버튼 및 반응형 스타일을 추가했다.
+- historyCode.txt
+  - 문제 원인, 구현 결과, 수정 이유와 보안 규칙을 기록했다.
+
+[Firebase 보안 규칙]
+- firestore.rules 파일 자체는 변경하지 않았다.
+- 기존 products 규칙이 읽기는 공개하고, 마이그레이션을 포함한 상품 생성과 관리자 상품 수정·삭제를 role=admin에게 허용한다.
+- isRecommended 변경은 관리자 전체 수정 조건에서만 가능하다.
+- 아래 규칙이 포함된 firestore.rules 전체를 Firebase Console에 게시해야 마이그레이션을 테스트할 수 있다.
+
+    match /products/{productId} {
+      allow read: if true;
+
+      allow create: if isAdmin()
+        && request.resource.data.keys().hasOnly([
+          'legacyId', 'name', 'nameEn', 'category', 'categoryValue', 'price',
+          'discountRate', 'stock', 'image', 'description', 'isRecommended',
+          'createAt', 'updateAt'
+        ])
+        && request.resource.data.name is string
+        && request.resource.data.name.size() > 0
+        && request.resource.data.category is string
+        && request.resource.data.category.size() > 0
+        && request.resource.data.categoryValue is string
+        && request.resource.data.categoryValue.size() > 0
+        && request.resource.data.price is number
+        && request.resource.data.price >= 0
+        && request.resource.data.discountRate is number
+        && request.resource.data.discountRate >= 0
+        && request.resource.data.discountRate <= 100
+        && request.resource.data.stock is int
+        && request.resource.data.stock >= 0
+        && request.resource.data.image is string
+        && request.resource.data.image.size() > 0
+        && request.resource.data.isRecommended is bool
+        && request.resource.data.createAt == request.time
+        && request.resource.data.updateAt == request.time;
+
+      allow update: if (
+          isAdmin()
+          && request.resource.data.keys().hasOnly([
+            'legacyId', 'name', 'nameEn', 'category', 'categoryValue', 'price',
+            'discountRate', 'stock', 'image', 'description', 'isRecommended',
+            'createAt', 'updateAt'
+          ])
+          && request.resource.data.diff(resource.data).changedKeys().hasOnly([
+            'name', 'nameEn', 'category', 'categoryValue', 'price', 'discountRate',
+            'stock', 'image', 'description', 'isRecommended', 'updateAt'
+          ])
+          && request.resource.data.createAt == resource.data.createAt
+          && request.resource.data.name is string
+          && request.resource.data.name.size() > 0
+          && request.resource.data.category is string
+          && request.resource.data.category.size() > 0
+          && request.resource.data.categoryValue is string
+          && request.resource.data.categoryValue.size() > 0
+          && request.resource.data.price is number
+          && request.resource.data.price >= 0
+          && request.resource.data.discountRate is number
+          && request.resource.data.discountRate >= 0
+          && request.resource.data.discountRate <= 100
+          && request.resource.data.stock is int
+          && request.resource.data.stock >= 0
+          && request.resource.data.image is string
+          && request.resource.data.image.size() > 0
+          && request.resource.data.isRecommended is bool
+          && request.resource.data.updateAt == request.time
+        ) || (
+          // 기존 주문 완료 트랜잭션용 예외: 상품 정보는 바꿀 수 없고 재고 감소만 허용한다.
+          isSignedIn()
+          && request.resource.data.keys() == resource.data.keys()
+          && request.resource.data.diff(resource.data).changedKeys().hasOnly(['stock', 'updateAt'])
+          && request.resource.data.stock is int
+          && request.resource.data.stock >= 0
+          && request.resource.data.stock < resource.data.stock
+          && request.resource.data.updateAt == request.time
+        );
+
+      allow delete: if isAdmin();
+    }
+
+[테스트 방법]
+1. 관리자 계정으로 /admin/products에 접속한다.
+2. 상품 데이터 마이그레이션 버튼을 누르고 생성 개수와 중복 제외 개수 메시지를 확인한다.
+3. 버튼을 다시 눌러 created=0에 해당하는 중복 제외 안내가 표시되는지 확인한다.
+4. /admin/recommended에서 Firestore 상품 목록이 출력되는지 확인한다.
+5. 추천 상품을 4개까지 지정하고 다섯 번째 지정 시 한글 제한 메시지가 표시되는지 확인한다.
+6. 일반 사용자 계정에서 products 생성 및 isRecommended 변경이 permission-denied인지 확인한다.
+
+[검사 결과]
+- npm.cmd run build 성공: 116개 모듈 변환, 빌드 오류 없음.
+- npm.cmd run lint 완료: 새 코드 경고 없음.
+- 기존 authStore.js, Footer.jsx, MyPage.jsx 경고 3개는 작업 범위와 무관해 유지했다.
+
+============================================================
+상품관리 마이그레이션 UI 제거 및 자동 이전 (2026-07-29)
+============================================================
+
+[수정 결과]
+- 상품관리 화면 맨 위의 상품 데이터 마이그레이션 버튼을 제거했다.
+- 상품 카드의 JSON 상품, 마이그레이션 필요, 읽기 전용 문구를 모두 제거했다.
+- 관리자 /admin/products 최초 진입 시 migrateJsonProducts를 자동 실행한다.
+- legacyId 중복 검사를 사용하므로 이미 이전된 상품은 다시 생성하지 않는다.
+- 자동 이전 후 Firestore 상품을 다시 조회해 재고 입력과 수정/삭제 버튼을 표시한다.
+- 자동 이전이 권한 문제로 실패하면 상단에 한글 오류를 표시하고 JSON 상품은 표시하되 카드 안에 마이그레이션 문구를 표시하지 않는다.
+
+[수정 파일과 이유]
+- src/pages/AdminProducts.jsx
+  - 수동 마이그레이션 버튼과 상태를 제거하고 최초 진입 자동 이전으로 변경했다.
+  - JSON 대체 상품 카드 안의 마이그레이션 관련 문구를 제거했다.
+- src/pages/Admin.module.scss
+  - 제거한 마이그레이션 버튼의 미사용 스타일을 삭제했다.
+- historyCode.txt
+  - 변경 이유, 보안 규칙 확인 및 검사 결과를 기록했다.
+
+[Firebase 보안 규칙]
+- firestore.rules는 변경하지 않았다.
+- 자동 이전은 기존 migrateJsonProducts와 products create 규칙을 사용한다.
+- 관리자만 products 문서를 생성할 수 있는 아래 조건이 Firebase Console에 게시되어 있어야 자동 이전이 성공한다.
+
+match /products/{productId} {
+  allow read: if true;
+  allow create: if isAdmin()
+    && request.resource.data.isRecommended is bool
+    && request.resource.data.createAt == request.time
+    && request.resource.data.updateAt == request.time;
+}
+
+주의: 위 코드는 핵심 조건 요약이며 실제 Firebase Console에는 firestore.rules 전체 파일을 게시한다.
+
+[검사 결과]
+- npm.cmd run build 성공: 116개 모듈 변환, 빌드 오류 없음.
+- npm.cmd run lint 완료: 새 코드 경고 없음.
+- 기존 authStore.js, Footer.jsx, MyPage.jsx 경고 3개는 이번 범위와 무관해 유지했다.
+
+============================================================
+마이페이지 주문 이미지 상품 상세 링크 연결 (2026-07-29)
+============================================================
+
+[구현 내용]
+- 마이페이지 주문 내역에서 상품 이미지를 클릭하면 /products/{productId} 상세 페이지로 이동한다.
+- 주문 items의 첫 번째 상품 productId를 상세 경로에 사용한다.
+- productId가 없는 과거 주문은 잘못된 상세 경로를 만들지 않고 기존 일반 이미지로 표시한다.
+- 키보드 포커스와 이미지 hover 상태를 추가했다.
+- 기존 데스크톱 76px, 모바일 60px 이미지 크기와 주문 카드 디자인을 유지했다.
+
+[수정 파일과 이유]
+- src/pages/MyPage.jsx
+  - 주문 상품 ID 추출 함수를 추가하고 주문 이미지를 React Router Link로 연결했다.
+- src/pages/MyPage.module.scss
+  - 주문 이미지 링크의 고정 크기, 포커스, hover 및 모바일 크기 스타일을 추가했다.
+- historyCode.txt
+  - 변경 내용과 검사 결과를 기록했다.
+
+[Firebase 및 보안 규칙]
+- 기존 주문 items에 저장되는 productId를 조회에만 사용한다.
+- Firestore 데이터 쓰기와 권한 범위는 변경하지 않아 firestore.rules 수정은 없다.
+
+[검사 결과]
+- npm.cmd run build 성공: 116개 모듈 변환, 빌드 오류 없음.
+- npm.cmd run lint 완료: 새 경고 없음.
+- 기존 authStore.js, Footer.jsx, MyPage.jsx useEffect 경고는 이번 범위와 무관해 유지했다.
+
+============================================================
+기존 주문 상품 상세 링크 ID 보완 (2026-07-29)
+============================================================
+
+[오류 원인]
+- 주문 이미지 Link는 정상 이동했지만 일부 과거 주문의 productId가 실제 상품 문서 ID가 아니라 사용자UID_상품ID 형태의 장바구니 문서 ID일 수 있었다.
+- products.json 마이그레이션 후 상품 문서 ID가 Firestore 자동 ID로 바뀌어 과거 legacyId를 그대로 사용하면 상세 상품을 찾지 못할 수 있었다.
+
+[수정 내용]
+- 주문 내역과 현재 상품 목록을 함께 조회한다.
+- 주문 상품 ID 앞에 사용자 UID가 포함되어 있으면 UID 접두사를 제거한다.
+- 실제 상세 링크 대상은 Firestore 문서 ID, legacyId, 상품명, 상품 이미지 순서로 비교해 찾는다.
+- 일치한 상품의 현재 Firestore 문서 ID로 /products/{id} 링크를 만든다.
+- 새 주문과 마이그레이션 이전의 기존 주문을 모두 지원한다.
+
+[수정 파일과 이유]
+- src/pages/MyPage.jsx
+  - 현재 상품 목록 조회와 기존 주문 ID 정규화 및 상품 매칭 로직을 추가했다.
+- historyCode.txt
+  - 상세 링크 실패 원인과 수정 및 검사 결과를 기록했다.
+
+[Firebase 및 보안 규칙]
+- orders와 products를 기존 읽기 권한으로 조회한다.
+- 문서 생성, 수정, 삭제와 데이터 구조 변경이 없어 firestore.rules는 수정하지 않았다.
+
+[검사 결과]
+- npm.cmd run build 성공: 116개 모듈 변환, 빌드 오류 없음.
+- npm.cmd run lint 완료: 새 경고 없음.
+- 기존 authStore.js, Footer.jsx, MyPage.jsx useEffect 경고는 이번 범위와 무관해 유지했다.
+
+============================================================
+상품 상세 배송 포장 참고 이미지 및 안내 추가 (2026-07-29)
+============================================================
+
+[이미지 생성]
+- built-in image_gen 도구를 사용했다.
+- 사용자가 제공한 3개 이미지는 흰색 배송 박스, 완충지, 투명 플라워 슬리브의 참고 이미지로만 사용했다.
+- 원본의 로고, 문구, UI, 정확한 구도는 복제하지 않았다.
+- 민트, 라벤더, 연분홍 꽃과 흰색 배송 박스, 완충지, 투명 손잡이 슬리브, 검은 리본을 조합한 새로운 3:2 상품 사진을 생성했다.
+- 최종 저장: public/img/detail/flower-delivery-packaging.png
+
+[최종 생성 프롬프트 요약]
+- product detail page용 premium realistic e-commerce packaging photograph.
+- 왼쪽에는 완충지와 보호 포장된 꽃을 담은 열린 흰색 배송 박스.
+- 오른쪽에는 투명 손잡이 슬리브와 검은 리본으로 포장한 완성 꽃 상품.
+- 밝은 흰색 스튜디오 배경, 부드러운 자연광, 로고·텍스트·워터마크 없음.
+
+[상세 페이지 표시 내용]
+- 제목: 꽃은 안전하게 포장해 배송합니다
+- 꽃의 크기와 종류에 맞춘 투명 보호 포장, 완충재, 전용 배송 박스 사용을 명시했다.
+- 생성 이미지는 포장 방식의 참고 이미지이며 실제 포장은 상품 형태와 꽃 구성에 따라 달라질 수 있음을 명시했다.
+
+[생성 및 수정 파일과 이유]
+- public/img/detail/flower-delivery-packaging.png
+  - 상세 페이지에서 실제 배송 포장 방식을 시각적으로 안내하기 위해 생성한 새 이미지 파일이다.
+- src/pages/ProductDetail.jsx
+  - 꽃 구성 아래에 PACKING & DELIVERY 안내 문구, 참고 이미지와 고지 문구를 추가했다.
+- src/pages/ProductDetail.module.scss
+  - 포장 안내 섹션, 3:2 반응형 이미지, 설명과 캡션 스타일을 추가했다.
+- historyCode.txt
+  - 이미지 생성 방식, 프롬프트, 파일 경로, 수정 이유와 검사 결과를 기록했다.
+
+[Firebase 및 보안 규칙]
+- 정적 이미지와 React 상세 화면만 변경했다.
+- Firestore 데이터와 권한 변경이 없어 firestore.rules 수정은 없다.
+
+[검사 결과]
+- npm.cmd run build 성공: 116개 모듈 변환, 빌드 오류 없음.
+- npm.cmd run lint 완료: 새 경고 없음.
+- 기존 Footer.jsx, authStore.js, MyPage.jsx 경고 3개는 이번 범위와 무관해 유지했다.
+
+============================================================
+사용자 꽃다발 기반 배송 포장 이미지 3종 생성 및 적용 (2026-07-29)
+============================================================
+
+[참고 이미지 역할]
+- 첫 번째 사용자 제공 이미지: 영문 인쇄 투명 보호백의 포장 방식 참고.
+- 두 번째 사용자 제공 이미지: 사용자가 보유한 꽃다발의 대상 참고.
+- 두 번째 이미지의 오렌지 튤립, 흰색 꽃, 곡선형 초록 줄기, 크림/오렌지 포장지, 파란 포인트, 오렌지 리본, 직사각형 글라스 특징을 생성 이미지에 반영했다.
+- 참고 이미지의 브랜드 로고, 계정명, 원본 문구와 구도를 복제하지 않았다.
+
+[이미지 생성 방식]
+- built-in image_gen 도구를 사용해 서로 다른 목적의 이미지 3장을 각각 생성했다.
+- 원본 생성 파일은 유지하고 프로젝트 public/img/detail에 복사했다.
+
+[생성 이미지]
+1. public/img/detail/flower-vacuum-sleeve.png
+   - 포장지, 꽃, 글라스 전체를 영문 인쇄 투명 진공형 보호백에 넣은 세로형 컷.
+   - 영문 문구: FLOWER DELIVERY, PACKED WITH CARE.
+2. public/img/detail/flower-paper-box.png
+   - 투명 보호백에 넣은 꽃과 글라스를 흰색 종이 배송 박스와 완충재로 고정한 컷.
+3. public/img/detail/flower-glass-protection.png
+   - 꽃 보호 구역과 글라스 고정 구역을 분리하고 글라스를 몰드 완충재와 지지대로 보호한 상세 컷.
+   - 영문 문구: FLOWER DELIVERY, GLASS PROTECTED.
+
+[수정 파일과 이유]
+- src/pages/ProductDetail.jsx
+  - 기존 한 장 포장 이미지를 새 이미지 3종 갤러리로 교체했다.
+  - 투명 보호백, 종이박스, 글라스 고정 포장 설명과 참고 이미지 고지를 추가했다.
+- src/pages/ProductDetail.module.scss
+  - 3열 포장 갤러리와 모바일 1열 레이아웃을 추가했다.
+  - 서로 다른 이미지 비율이 잘리지 않도록 고정 프레임과 object-fit: contain을 적용했다.
+- historyCode.txt
+  - 참고 이미지 역할, 최종 프롬프트 개요, 생성 파일과 검사 결과를 기록했다.
+
+[Firebase 및 보안 규칙]
+- 정적 이미지와 상품 상세 UI만 변경했다.
+- Firestore 데이터 및 권한 변경이 없어 firestore.rules 수정은 없다.
+
+[검사 결과]
+- npm.cmd run build 성공: 116개 모듈 변환, 빌드 오류 없음.
+- npm.cmd run lint 완료: 새 경고 없음.
+- 기존 Footer.jsx, authStore.js, MyPage.jsx 경고 3개는 이번 범위와 무관해 유지했다.

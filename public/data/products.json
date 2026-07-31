@@ -1,0 +1,83 @@
+﻿[
+  {
+    "id": 1,
+    "name": "라벤더 글라스 바스켓",
+    "nameEn": "Lavender Glass Basket",
+    "category": "글라스 바스켓",
+    "categoryValue": "glass-basket",
+    "price": 329000,
+    "discountRate": 15,
+    "image": "/img/products/products01.jpg"
+  },
+  {
+    "id": 2,
+    "name": "오렌지 튤립 글라스",
+    "nameEn": "Orange Tulip Glass Basket",
+    "category": "글라스 바스켓",
+    "categoryValue": "glass-basket",
+    "price": 319000,
+    "discountRate": 12,
+    "image": "/img/products/products02.webp"
+  },
+  {
+    "id": 3,
+    "name": "핑크 롱 랩 부케",
+    "nameEn": "Pink Long Wrap Bouquet",
+    "category": "롱 랩 부케",
+    "categoryValue": "long-wrap",
+    "price": 49000,
+    "discountRate": 10,
+    "image": "/img/products/products03.jpg"
+  },
+  {
+    "id": 4,
+    "name": "민트 오키드 랩 부케",
+    "nameEn": "Mint Orchid Wrap Bouquet",
+    "category": "롱 랩 부케",
+    "categoryValue": "long-wrap",
+    "price": 49000,
+    "discountRate": 5,
+    "image": "/img/products/products04.png"
+  },
+  {
+    "id": 5,
+    "name": "쥬얼 캘라 플라워",
+    "nameEn": "Jeweled Calla Flower",
+    "category": "데코 플라워",
+    "categoryValue": "deco-flower",
+    "price": 32000,
+    "discountRate": 20,
+    "image": "/img/products/products05.png"
+  },
+  {
+    "id": 6,
+    "name": "민트 데코 플라워",
+    "nameEn": "Mint Deco Flower",
+    "category": "데코 플라워",
+    "categoryValue": "deco-flower",
+    "price": 40000,
+    "discountRate": 8,
+    "image": "/img/products/products06.jpeg"
+  },
+  {
+    "id": 7,
+    "name": "플로럴 메시지 카드",
+    "nameEn": "Floral Message Card",
+    "category": "메시지 카드",
+    "categoryValue": "message-card",
+    "price": 1000,
+    "discountRate": 15,
+    "image": "/img/products/products07.png"
+  },
+  {
+    "id": 8,
+    "name": "파스텔 블룸 카드",
+    "nameEn": "Pastel Bloom Card",
+    "category": "메시지 카드",
+    "categoryValue": "message-card",
+    "price": 1000,
+    "discountRate": 0,
+    "image": "/img/products/products08.jpg"
+  }
+]
+

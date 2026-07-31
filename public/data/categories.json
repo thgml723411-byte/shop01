@@ -1,0 +1,30 @@
+﻿[
+  {
+    "id": 1,
+    "name": "글라스 바스켓",
+    "description": "글라스까지 함께 구성된 오브제형 꽃",
+    "path": "/products/category/glass-basket",
+    "image": "/img/category/category01.jpg"
+  },
+  {
+    "id": 2,
+    "name": "롱 랩 부케",
+    "description": "가로로 길게 펼쳐지는 특별한 포장 부케",
+    "path": "/products/category/long-wrap",
+    "image": "/img/category/category02.jpg"
+  },
+  {
+    "id": 3,
+    "name": "데코 플라워",
+    "description": "큐빅과 무늬로 섬세하게 장식한 포인트 꽃",
+    "path": "/products/category/deco-flower",
+    "image": "/img/category/category03.png"
+  },
+  {
+    "id": 4,
+    "name": "메시지 카드",
+    "description": "짧은 손편지를 함께 전할 수 있는 카드 편지지",
+    "path": "/products/category/message-card",
+    "image": "/img/category/category04.png"
+  }
+]

@@ -1,0 +1,540 @@
+﻿.ProductDetail {
+  min-height: 720px;
+  padding-top: 104px;
+  background: linear-gradient(180deg, #f7faf9 0%, #ffffff 44%, #eef6f4 100%);
+}
+
+.backLink {
+  display: inline-flex;
+  align-items: center;
+  height: 38px;
+  margin-left: max(24px, calc((100% - 1180px) / 2));
+  padding: 0 14px;
+  color: #267982;
+  font-size: 13px;
+  font-weight: 900;
+  text-decoration: none;
+  background: #ffffff;
+  border: 1px solid rgba(117, 165, 169, 0.36);
+  border-radius: 8px;
+  transition: background 0.18s ease, color 0.18s ease, border-color 0.18s ease;
+
+  &:hover {
+    color: #ffffff;
+    background: #267982;
+    border-color: #267982;
+  }
+}
+.productArea {
+  display: grid;
+  grid-template-columns: minmax(360px, 560px) minmax(360px, 1fr);
+  grid-template-areas:
+    "image info"
+    "image price"
+    "image delivery"
+    "image quantity"
+    "image total"
+    "image actions";
+  align-items: start;
+  column-gap: 48px;
+  row-gap: 0;
+  width: min(100% - 48px, 1180px);
+  margin: 0 auto;
+  padding: 28px 0 92px;
+  color: #071923;
+}
+
+.imageArea {
+  grid-area: image;
+  overflow: hidden;
+  width: 100%;
+  aspect-ratio: 1 / 1.05;
+  background: #eef7f5;
+  box-shadow: 0 26px 58px rgba(73, 113, 116, 0.18);
+
+  img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+}
+
+.infoArea {
+  grid-area: info;
+  align-self: start;
+  padding-top: 4px;
+  padding-bottom: 30px;
+  border-bottom: 1px solid rgba(111, 149, 154, 0.22);
+
+  p:first-child {
+    margin: 0 0 12px;
+    color: #267982;
+    font-size: 13px;
+    font-weight: 900;
+    letter-spacing: 4px;
+  }
+
+  h2 {
+    margin: 0 0 14px;
+    color: #071923;
+    font-size: 34px;
+    font-weight: 900;
+    line-height: 1.2;
+    letter-spacing: 0;
+  }
+
+  p:last-child {
+    min-height: 24px;
+    margin: 0;
+    color: #6f8589;
+    font-size: 15px;
+    font-weight: 600;
+    line-height: 1.7;
+  }
+}
+
+.priceArea {
+  grid-area: price;
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 8px 12px;
+  padding: 28px 0;
+  border-bottom: 1px solid rgba(111, 149, 154, 0.22);
+
+  span {
+    color: #267982;
+    font-size: 24px;
+    font-weight: 900;
+  }
+
+  del {
+    color: #9aacaf;
+    font-size: 15px;
+    font-weight: 700;
+  }
+
+  strong {
+    color: #071923;
+    font-size: 28px;
+    font-weight: 900;
+    letter-spacing: 0;
+  }
+}
+
+.deliveryArea {
+  grid-area: delivery;
+}
+
+.quantityArea {
+  grid-area: quantity;
+}
+
+.deliveryArea,
+.quantityArea {
+  display: grid;
+  grid-template-columns: 92px 1fr;
+  align-items: start;
+  gap: 16px;
+  min-height: 72px;
+  padding: 18px 0;
+  border-bottom: 1px solid rgba(111, 149, 154, 0.22);
+
+  > span {
+    color: #426d78;
+    font-size: 14px;
+    font-weight: 900;
+  }
+
+  strong,
+  small {
+    color: #52686d;
+    font-size: 14px;
+    font-weight: 700;
+    line-height: 1.5;
+  }
+}
+
+.quantityArea {
+  grid-template-columns: 92px auto 1fr;
+
+  small {
+    color: #8a9da1;
+  }
+}
+
+.soldOutText {
+  display: inline-flex;
+  align-items: center;
+  min-height: 38px;
+  color: #b42318;
+  font-size: 15px;
+  font-weight: 900;
+}
+
+.totalArea {
+  grid-area: total;
+  margin-top: 22px;
+  padding: 22px 24px;
+  background: linear-gradient(135deg, rgba(247, 253, 252, 0.95), rgba(255, 247, 250, 0.9));
+  border: 1px solid rgba(117, 165, 169, 0.28);
+  box-shadow: 0 18px 36px rgba(73, 113, 116, 0.11);
+
+  h2 {
+    margin: 0;
+    color: #071923;
+    font-size: 22px;
+    font-weight: 900;
+    text-align: left;
+    letter-spacing: 0;
+  }
+}
+
+
+.actionArea {
+  grid-area: actions;
+  display: grid;
+  grid-template-columns: 0.9fr 1.35fr 1.35fr;
+  gap: 10px;
+  margin-top: 14px;
+  padding: 14px;
+  background: #ffffff;
+  border: 1px solid rgba(117, 165, 169, 0.28);
+  border-radius: 8px;
+  box-shadow: 0 14px 30px rgba(73, 113, 116, 0.08);
+
+  button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 54px;
+    padding: 0 18px;
+    border-radius: 7px;
+    font-size: 15px;
+    font-weight: 900;
+    line-height: 1;
+    cursor: pointer;
+    transition: transform 0.18s ease, box-shadow 0.18s ease, background 0.18s ease;
+
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 24px rgba(73, 113, 116, 0.14);
+    }
+
+    &:disabled {
+      color: #ffffff;
+      background: #9aacaf;
+      border-color: #9aacaf;
+      cursor: not-allowed;
+    }
+
+    &:disabled:hover {
+      transform: none;
+      box-shadow: none;
+    }
+  }
+}
+
+.wishButton,
+.cartButton {
+  color: #267982;
+  background: #ffffff;
+  border: 1px solid rgba(117, 165, 169, 0.46);
+}
+
+.cartButton {
+  background: #f7fcfb;
+}
+
+.buyButton {
+  color: #ffffff;
+  background: #0a9ea3;
+  border: 1px solid #0a9ea3;
+}
+
+.detailSection {
+  width: min(100% - 48px, 1180px);
+  margin: 0 auto;
+  padding: 0 0 110px;
+  color: #071923;
+}
+
+.sectionTitle {
+  margin: 0 0 22px;
+  padding-top: 34px;
+  border-top: 1px solid rgba(111, 149, 154, 0.22);
+
+  p {
+    margin: 0 0 8px;
+    color: #426d78;
+    font-size: 12px;
+    font-weight: 900;
+    letter-spacing: 4px;
+  }
+
+  h3 {
+    margin: 0;
+    color: #071923;
+    font-size: 28px;
+    font-weight: 900;
+    letter-spacing: 0;
+  }
+}
+
+
+.flowerGrid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.flowerCard {
+  min-width: 0;
+  padding: 18px;
+  background: rgba(255, 255, 255, 0.78);
+  border: 1px solid rgba(117, 165, 169, 0.24);
+  border-radius: 8px;
+
+  strong {
+    display: block;
+    color: #071923;
+    font-size: 16px;
+    font-weight: 900;
+  }
+
+  p {
+    margin: 6px 0 0;
+    color: #61777b;
+    font-size: 13px;
+    font-weight: 700;
+    line-height: 1.5;
+  }
+}
+
+.packagingGrid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 16px;
+}
+
+.packagingImage {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.packagingCaption {
+  margin: 0;
+  color: #61777b;
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 1.5;
+}
+
+// 사진을 가운데 두고 네 모서리에 확대 콜아웃을 배치하는 다이어그램입니다.
+// 좌표는 ProductDetail.jsx의 DIAGRAM_W/H, CALLOUT_SIZE 등 JS 상수와 함께 움직이므로
+// 이 파일에서 폭/높이 숫자를 바꿀 때는 JSX 쪽 상수도 함께 맞춰야 합니다.
+.flowerDiagram {
+  position: relative;
+  width: 820px;
+  max-width: 100%;
+  height: 620px;
+  margin: 0 auto;
+  padding-bottom: 56px; // 하단 모서리 콜아웃의 캡션 텍스트가 빠져나갈 여유 공간
+}
+
+.flowerDiagramLines {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+
+  line {
+    stroke: rgba(38, 121, 130, 0.45);
+    stroke-width: 1.5;
+  }
+}
+
+.flowerDiagramPhoto {
+  position: absolute;
+
+  img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 12px;
+  }
+}
+
+.flowerDiagramPin {
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  margin: -5px 0 0 -5px;
+  border-radius: 50%;
+  background: #fff;
+  border: 2px solid #267982;
+  box-shadow: 0 0 0 3px rgba(38, 121, 130, 0.18);
+}
+
+.flowerDiagramCallout {
+  position: absolute;
+}
+
+.flowerDiagramZoom {
+  display: block;
+  width: 100%;
+  height: 150px;
+  border-radius: 10px;
+  border: 1px solid rgba(117, 165, 169, 0.35);
+  background-repeat: no-repeat;
+  background-size: 420% auto;
+  box-shadow: 0 6px 16px rgba(7, 25, 35, 0.1);
+}
+
+.flowerDiagramCaption {
+  margin-top: 8px;
+  text-align: center;
+
+  strong {
+    display: block;
+    color: #071923;
+    font-size: 14px;
+    font-weight: 900;
+  }
+
+  p {
+    margin: 2px 0 0;
+    color: #61777b;
+    font-size: 12px;
+    font-weight: 700;
+    line-height: 1.4;
+  }
+}
+
+// 모바일에서는 좌표 기반 캔버스 대신 세로 목록으로 대체합니다(900px 이하에서만 표시).
+.flowerDiagramMobile {
+  display: none;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.flowerDiagramMobileItem {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 10px 0;
+  border-bottom: 1px solid rgba(117, 165, 169, 0.18);
+
+  &:last-child {
+    border-bottom: none;
+  }
+
+  strong {
+    display: block;
+    color: #071923;
+    font-size: 15px;
+    font-weight: 900;
+  }
+
+  p {
+    margin: 4px 0 0;
+    color: #61777b;
+    font-size: 13px;
+    font-weight: 700;
+    line-height: 1.5;
+  }
+}
+
+.flowerDiagramMobileZoom {
+  flex-shrink: 0;
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  border: 1px solid rgba(117, 165, 169, 0.35);
+  background-repeat: no-repeat;
+  background-size: 320% auto;
+}
+
+@media (max-width: 900px) {
+  .productArea {
+    grid-template-columns: 1fr;
+    grid-template-areas:
+      "image"
+      "info"
+      "price"
+      "delivery"
+      "quantity"
+      "total"
+      "actions";
+    width: min(100% - 32px, 640px);
+    padding: 118px 0 72px;
+  }
+
+  .infoArea {
+    padding-top: 0;
+    padding-bottom: 24px;
+  }
+
+  .infoArea h2 {
+    font-size: 28px;
+  }
+
+  .priceArea strong {
+    font-size: 24px;
+  }
+
+  .deliveryArea,
+  .quantityArea {
+    grid-template-columns: 76px 1fr;
+  }
+
+  .quantityArea {
+    grid-template-columns: 76px auto;
+
+    small {
+      grid-column: 2;
+    }
+  }
+
+  .actionArea {
+    grid-template-columns: 1fr;
+  }
+
+  .detailSection {
+    width: min(100% - 32px, 640px);
+    padding-bottom: 76px;
+  }
+
+  .sectionTitle h3 {
+    font-size: 24px;
+  }
+
+  .flowerGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .flowerDiagram {
+    display: none;
+  }
+
+  .flowerDiagramMobile {
+    display: block;
+  }
+
+  .totalArea h2 {
+    font-size: 20px;
+    text-align: left;
+  }
+}
+
+
+
+
+
+
+
